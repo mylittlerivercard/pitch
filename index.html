@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trace & Anchor — Pitch Investisseur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --navy: #071525;
+  --navy-2: #091a2d;
+  --navy-light: #0e2236;
+  --navy-mid: #132b42;
+  --off-white: #ffffff;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.18);
+  --muted: rgba(255,255,255,0.7);
+  --border: rgba(201,168,76,0.22);
+  --border-hi: rgba(201,168,76,0.45);
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--navy);
+  color: var(--off-white);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(7,21,37,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 40px;
+  height: 56px;
+  gap: 0;
+}
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  color: var(--off-white);
+  letter-spacing: -0.3px;
+  margin-right: 36px;
+  flex-shrink: 0;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links { display: flex; gap: 2px; flex: 1; }
+.nav-link {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: 'DM Mono', monospace;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.nav-link:hover { color: var(--off-white); background: rgba(201,168,76,0.08); }
+.nav-link.active { color: var(--gold); background: rgba(201,168,76,0.1); }
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--gold);
+  border: 0.5px solid var(--border-hi);
+  padding: 3px 10px;
+  border-radius: 3px;
+  letter-spacing: 1.5px;
+  flex-shrink: 0;
+}
+
+/* ── PAGES ── */
+.page { display: none; padding: 80px 0 60px; min-height: 100vh; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.container { max-width: 860px; margin: 0 auto; padding: 0 40px; }
+
+/* ── TYPOGRAPHY ── */
+.serif { font-family: 'DM Serif Display', serif; }
+.gold { color: var(--gold); }
+.muted { color: var(--muted); }
+
+/* ── SECTION LABEL ── */
+.s-label {
+  font-size: 10px; color: var(--gold); letter-spacing: 2.5px;
+  text-transform: uppercase; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.s-label::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+/* ── DIVIDER ── */
+.divider { height: 0.5px; background: var(--border); margin: 36px 0; }
+
+/* ── PAGE 1 : PRÉSENTATION ── */
+.hero-eyebrow { font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.15;
+  color: var(--off-white);
+  margin-bottom: 20px;
+}
+.hero-title em { font-style: normal; color: var(--gold); }
+.hero-body { font-size: 13px; color: var(--muted); line-height: 1.8; max-width: 620px; margin-bottom: 32px; }
+
+.what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.card {
+  background: var(--navy-light); border: 0.5px solid var(--border);
+  border-radius: 10px; padding: 18px 20px;
+}
+.card-icon { font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+.card-title { font-size: 13px; color: var(--off-white); font-weight: 500; margin-bottom: 6px; }
+.card-title a { color: var(--gold-light); text-decoration: none; border-bottom: 0.5px solid rgba(232,201,122,0.35); }
+.card-title a:hover { opacity: 0.75; }
+.card-body { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+.analogy {
+  background: rgba(201,168,76,0.06); border: 0.5px solid var(--border-hi);
+  border-radius: 8px; padding: 16px 20px;
+  font-size: 12px; color: var(--off-white); line-height: 1.8;
+}
+.analogy em { color: var(--gold); font-style: normal; }
+
+/* ── NIVEAUX ── */
+.levels { display: flex; flex-direction: column; gap: 8px; }
+.level {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 14px 16px;
+  background: var(--navy-light); border: 0.5px solid var(--border); border-radius: 8px;
+  transition: border-color 0.2s;
+}
+.level:hover { border-color: var(--border-hi); }
+.level-price { font-size: 16px; font-weight: 500; color: var(--gold); min-width: 56px; text-align: right; padding-top: 1px; flex-shrink: 0; }
+.level-name { font-size: 12px; color: var(--off-white); font-weight: 500; margin-bottom: 4px; }
+.level-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.level-cost { font-size: 10px; color: rgba(201,168,76,0.6); margin-top: 5px; font-style: italic; }
+.level-badge {
+  display: inline-block; font-size: 10px; color: var(--gold);
+  border: 0.5px solid var(--border); padding: 2px 8px;
+  border-radius: 3px; margin-top: 6px; letter-spacing: 0.5px;
+}
+.level.premium { border-color: rgba(201,168,76,0.42); background: rgba(201,168,76,0.05); }
+
+/* ── VDJ LINK ── */
+.vdj {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 16px 20px;
+  background: var(--navy-light); border: 0.5px solid var(--border-hi); border-radius: 10px;
+  text-decoration: none; transition: background 0.2s;
+}
+.vdj:hover { background: var(--navy-mid); }
+.vdj-left { display: flex; align-items: center; gap: 14px; }
+.vdj-logo {
+  width: 40px; height: 40px; border-radius: 8px;
+  background: rgba(201,168,76,0.1); border: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--gold); flex-shrink: 0;
+}
+.vdj-title { font-size: 12px; color: var(--off-white); font-weight: 500; margin-bottom: 3px; }
+.vdj-sub { font-size: 11px; color: var(--muted); }
+.vdj-arrow { font-size: 18px; color: var(--gold); opacity: 0.6; }
+
+/* ── PAGE 2 : PITCH ── */
+.pitch-hero {
+  background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%);
+  border: 0.5px solid var(--border); border-radius: 12px;
+  padding: 32px 36px; margin-bottom: 28px;
+}
+.pitch-title { font-family: 'DM Serif Display', serif; font-size: clamp(22px, 3vw, 32px); line-height: 1.2; margin-bottom: 14px; }
+.pitch-title em { font-style: normal; color: var(--gold); }
+.pitch-sub { font-size: 12px; color: var(--muted); line-height: 1.8; }
+
+.milestones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.milestone {
+  background: var(--navy-light); border: 0.5px solid var(--border);
+  border-radius: 10px; padding: 18px 20px; position: relative; overflow: hidden;
+}
+.milestone::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gold); opacity: 0.55; }
+.milestone-title { font-size: 12px; font-weight: 500; color: var(--off-white); margin-bottom: 6px; }
+.milestone-detail { font-size: 11px; color: var(--muted); line-height: 1.7; }
+.milestone-badge {
+  display: inline-block; font-size: 10px; color: var(--gold);
+  border: 0.5px solid var(--border); padding: 2px 8px;
+  border-radius: 3px; margin-top: 8px; letter-spacing: 0.5px;
+}
+
+.uses { display: flex; flex-direction: column; gap: 8px; }
+.use-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 13px 16px;
+  background: var(--navy-light); border: 0.5px solid var(--border); border-radius: 8px;
+}
+.use-amount { font-size: 16px; font-weight: 500; color: var(--gold); min-width: 52px; text-align: right; flex-shrink: 0; }
+.use-label { font-size: 12px; color: var(--off-white); }
+.use-sub { font-size: 11px; color: var(--muted); }
+.total-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 15px 18px;
+  background: rgba(201,168,76,0.08); border: 0.5px solid var(--border-hi); border-radius: 8px; margin-top: 4px;
+}
+.total-label { font-size: 12px; color: var(--gold); letter-spacing: 1px; }
+.total-amount { font-size: 22px; font-weight: 500; color: var(--gold); }
+
+.outcomes { display: flex; flex-direction: column; gap: 10px; }
+.outcome {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 16px;
+  background: var(--navy-light); border: 0.5px solid var(--border); border-radius: 8px;
+}
+.outcome-num { font-size: 11px; color: var(--gold); min-width: 22px; padding-top: 1px; }
+.outcome-text { font-size: 12px; color: var(--off-white); line-height: 1.7; }
+.outcome-text strong { color: var(--gold-light); font-weight: 500; }
+
+.cta-block {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 24px 28px;
+  background: var(--navy-light); border: 0.5px solid var(--border-hi); border-radius: 10px;
+}
+.cta-text { font-size: 12px; color: var(--muted); line-height: 1.8; max-width: 420px; }
+.cta-text em { color: var(--off-white); font-style: normal; }
+.btn-gold {
+  background: var(--gold); color: var(--navy);
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+  border: none; padding: 12px 22px; border-radius: 6px;
+  cursor: pointer; white-space: nowrap; letter-spacing: 0.8px;
+  transition: opacity 0.15s; flex-shrink: 0; text-decoration: none;
+  display: inline-block;
+}
+.btn-gold:hover { opacity: 0.85; }
+
+/* ── PAGE 3 : PRÉVISIONNEL ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+.kpi {
+  background: var(--navy-light); border: 0.5px solid var(--border);
+  border-radius: 10px; padding: 16px 18px;
+}
+.kpi.best { border-color: var(--border-hi); background: rgba(201,168,76,0.05); }
+.kpi-year { font-size: 10px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.kpi-rev { font-size: 26px; font-weight: 500; color: var(--off-white); margin-bottom: 2px; }
+.kpi.best .kpi-rev { color: var(--gold-light); }
+.kpi-sub { font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+.kpi-rows { border-top: 0.5px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.kpi-row { display: flex; justify-content: space-between; font-size: 10px; }
+.kpi-row-l { color: var(--muted); }
+.kpi-row-v { color: var(--off-white); }
+.kpi-tag {
+  display: inline-block; font-size: 10px; color: var(--gold);
+  border: 0.5px solid var(--border); padding: 2px 7px;
+  border-radius: 3px; margin-top: 8px; letter-spacing: 0.5px;
+}
+
+.chart-wrap { position: relative; width: 100%; height: 280px; margin-bottom: 10px; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px; font-size: 11px; color: var(--muted); }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.leg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+.hypo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+.hypo {
+  background: var(--navy-light); border: 0.5px solid var(--border);
+  border-radius: 8px; padding: 14px 16px;
+}
+.hypo-title { font-size: 11px; color: var(--gold); font-weight: 500; margin-bottom: 8px; }
+.hypo-item {
+  font-size: 11px; color: var(--muted); line-height: 1.7;
+  padding-left: 10px; border-left: 1.5px solid var(--border); margin-top: 5px;
+}
+.hypo-item em { color: var(--off-white); font-style: normal; }
+
+.disclaimer-block {
+  margin-top: 28px; padding: 14px 18px;
+  background: rgba(201,168,76,0.04); border: 0.5px solid var(--border);
+  border-radius: 8px; font-size: 10px; color: rgba(255,255,255,0.32); line-height: 1.8;
+}
+
+/* ── URGENCY TICKER ── */
+.ticker {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 40px;
+  background: rgba(201,168,76,0.05); border-top: 0.5px solid var(--border);
+  font-size: 10px; color: var(--gold); letter-spacing: 0.5px;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+  animation: pulse 1.8s ease-in-out infinite; flex-shrink: 0;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  nav { padding: 0 16px; gap: 4px; }
+  .nav-link { padding: 5px 8px; font-size: 10px; }
+  .nav-badge { display: none; }
+  .container { padding: 0 20px; }
+  .what-grid, .milestones, .kpi-grid, .hypo-grid { grid-template-columns: 1fr; }
+  .cta-block { flex-direction: column; align-items: flex-start; }
+  .pitch-hero { padding: 22px 20px; }
+  .ticker { padding: 10px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Trace <span>&</span> Anchor</div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('p1', this)">Le service</button>
+    <button class="nav-link" onclick="showPage('p2', this)">Pitch bridge</button>
+    <button class="nav-link" onclick="showPage('p3', this)">Prévisionnel</button>
+  </div>
+  <div class="nav-badge">Bridge — 10k€</div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     PAGE 1 — LE SERVICE
+═════════════════════════════════════════════ -->
+<div class="page active" id="p1">
+<div class="container">
+
+  <div class="hero-eyebrow">Trace & Anchor — Présentation</div>
+  <h1 class="hero-title">La preuve numérique<br><em>opposable,</em> par conception.</h1>
+  <p class="hero-body">
+    Trace & Anchor est une plateforme LegalTech qui permet à des professionnels du droit, des créateurs et des entreprises de générer des preuves numériques cryptographiquement inviolables — sans jamais transmettre leurs fichiers à nos serveurs. L'empreinte SHA-256 est calculée localement, puis ancrée de façon immuable sur la blockchain Solana.
+  </p>
+
+  <div class="s-label">Le mécanisme</div>
+  <div class="what-grid" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-icon">▸ Preuve numérique</div>
+      <div class="card-title"><a href="https://www.traceandanchor.com" style="color:var(--gold-light);text-decoration:none;border-bottom:0.5px solid rgba(232,201,122,0.4);">Trace &amp; Anchor ↗</a> — certifier l'existence</div>
+      <div class="card-body">L'empreinte cryptographique (SHA-256) du fichier est calculée localement sur l'appareil de l'utilisateur. Le fichier source n'est jamais transmis. Cette empreinte est ancrée de façon immuable sur Solana avec un horodatage certifié.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">▸ Opposabilité juridique</div>
+      <div class="card-title">Une preuve qui tient devant un juge</div>
+      <div class="card-body">Chaque ancrage produit un horodatage vérifiable lié à l'empreinte, enregistré de manière permanente et auditable. La preuve est opposable devant les juridictions françaises et européennes, dans le cadre eIDAS 2.0.</div>
+    </div>
+  </div>
+  <div class="analogy">
+    Imaginez un <em>timbre fiscal numérique</em> : l'utilisateur consomme un jeton T&A pour déclencher la certification. Sans jeton, pas de transaction. Sans transaction, pas de preuve. <em>Le jeton n'est pas un accessoire — il est le mécanisme.</em> La blockchain Solana est l'autoroute ; le jeton est le véhicule ; la preuve est la destination.
+  </div>
+
+  <div class="divider"></div>
+  <div class="s-label">Quatre niveaux de protection</div>
+  <div class="levels">
+
+    <div class="level">
+      <div class="level-price">1 €</div>
+      <div>
+        <div class="level-name">Ancrage blockchain Solana</div>
+        <div class="level-desc">Empreinte SHA-256 et horodatage gravés de façon immuable sur Solana. Preuve d'existence de base, instantanée, vérifiable publiquement.</div>
+        <div class="level-cost">Coût réseau : 0,000005 SOL par transaction (~&lt; 0,001 €) — marge opérationnelle maximale.</div>
+      </div>
+    </div>
+
+    <div class="level">
+      <div class="level-price">+3 €</div>
+      <div>
+        <div class="level-name">Horodatage qualifié eIDAS</div>
+        <div class="level-desc">Certification légale européenne via Datasure, prestataire de confiance qualifié ANSSI. Force probante maximale reconnue dans toute l'Union européenne.</div>
+        <div class="level-cost">Coût technique : 0,10 € par horodatage eIDAS UTC — marge de 96,7 %.</div>
+      </div>
+    </div>
+
+    <div class="level">
+      <div class="level-price">+5 €</div>
+      <div>
+        <div class="level-name">Preuve certifiée liée à l'identité</div>
+        <div class="level-desc">Association cryptographique de l'identité officielle de l'utilisateur (FranceConnect+) à la preuve. L'auteur est formellement et irrévocablement ancré à son document, à l'instant certifié de la création.</div>
+        <div class="level-cost">Coût technique : FranceConnect est gratuit pour le service partenaire — marge à 100 % sur ce composant.</div>
+        <div class="level-badge">→ Habilitation FranceConnect+ obtenue — n°H121417</div>
+      </div>
+    </div>
+
+    <div class="level premium">
+      <div class="level-price">+21 €</div>
+      <div>
+        <div class="level-name">Constat par Commissaire de justice</div>
+        <div class="level-desc">Intervention d'un officier ministériel pour dresser un constat numérique à valeur légale renforcée. Niveau de preuve maximal, directement exploitable en contentieux, force exécutoire immédiate.</div>
+        <div class="level-cost">Frais CDJ : en cours de négociation avec les études partenaires.</div>
+        <div class="level-badge">→ Niveau procédural — adressage des litiges complexes</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+  <div class="s-label">Cas d'usage — cabinet d'avocats</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-body" style="font-size:12px; line-height:1.9;">
+      Un cabinet souhaite horodater un constat numérique pour un litige. <br><br>
+      <strong style="color:var(--gold);">1.</strong> Activation du service — le cabinet consomme des jetons T&A pour accéder au service. Le jeton est consommé, attestant de l'utilisation effective.<br>
+      <strong style="color:var(--gold);">2.</strong> Ancrage sur Solana — le document est ancré avec un horodatage certifié. L'empreinte SHA-256 du fichier est enregistrée de manière immuable.<br>
+      <strong style="color:var(--gold);">3.</strong> Preuve opposable — la preuve générée est opposable devant les juridictions françaises et européennes, conforme au cadre eIDAS 2.0.<br>
+      <strong style="color:var(--gold);">4.</strong> Traçabilité complète — l'ensemble de l'opération est tracée, vérifiable et auditable par toute partie autorisée.
+    </div>
+  </div>
+
+  <div class="s-label">Crédibilité externe</div>
+  <a class="vdj" href="https://www.village-justice.com/articles/preuve-numerique-blockchain-que-change-jurisprudence-2025-pour-les,56231.html" style="text-decoration:none;">
+    <div class="vdj-left">
+      <div class="vdj-logo">VdJ</div>
+      <div>
+        <div class="vdj-title">Publication — Village de la Justice</div>
+        <div class="vdj-sub">Magazine de référence des professionnels du droit en France. Notre article sur la preuve numérique blockchain et la jurisprudence 2025, sélectionné et publié par le comité éditorial.</div>
+      </div>
+    </div>
+    <div class="vdj-arrow">↗</div>
+  </a>
+
+  <div class="divider"></div>
+  <div style="text-align:center; padding-bottom: 20px;">
+    <button class="btn-gold" onclick="showPage('p2', document.querySelectorAll('.nav-link')[1])">Voir le pitch bridge →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 2 — PITCH BRIDGE
+═════════════════════════════════════════════ -->
+<div class="page" id="p2">
+<div class="container">
+
+  <div class="pitch-hero">
+    <div class="hero-eyebrow" style="margin-bottom:14px;">Opportunité d'investissement — Augmentation de capital</div>
+    <h2 class="pitch-title">Un jalon réglementaire<br><em>inattaquable</em> à franchir.</h2>
+    <p class="pitch-sub">La plateforme est en production. L'habilitation FranceConnect+ n°H121417 est obtenue. Il reste un seul verrou : la notification AMF (MiCA Title II). Les documents sont prêts — c'est uniquement une question d'exécution. Nous ouvrons le capital pour accélérer ce dernier jalon.</p>
+  </div>
+
+  <div class="s-label">Les deux jalons — état d'avancement</div>
+  <div class="milestones" style="margin-bottom:28px;">
+    <div class="milestone" style="border-color:rgba(201,168,76,0.55); background:rgba(201,168,76,0.05);">
+      <div class="milestone-title" style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;"></span>
+        Habilitation FranceConnect+ — obtenue
+      </div>
+      <div class="milestone-detail">Architecture validée par la DINUM, cas d'usage de réconciliation accepté, processus de qualification finalisé. Trace & Anchor devient le 10e service FC+ en France et le seul LegalTech privé à usage transactionnel.</div>
+      <div class="milestone-badge">✓ Habilitation n°H121417 — barrière à l'entrée active dès aujourd'hui</div>
+    </div>
+    <div class="milestone">
+      <div class="milestone-title" style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(201,168,76,0.4);border:1px solid var(--gold);flex-shrink:0;"></span>
+        Notification AMF / MiCA Title II — en cours
+      </div>
+      <div class="milestone-detail">Dépôt du Livre Blanc auprès de l'Autorité des Marchés Financiers. Dossier intégralement finalisé. Seuls les frais de dépôt et le runway d'exécution restent à couvrir pour déclencher la procédure.</div>
+      <div class="milestone-badge">→ Dernier verrou — dossier prêt au dépôt</div>
+    </div>
+  </div>
+
+  <div class="s-label">Pourquoi maintenant — la fenêtre</div>
+  <div class="card" style="margin-bottom:28px;">
+    <div class="card-body" style="font-size:12px; line-height:1.9;">
+      FC+ compte actuellement 9 services intégrés en France, tous publics ou parapublics. Trace & Anchor serait le <strong style="color:var(--gold-light);">10e service</strong> et le <strong style="color:var(--gold-light);">premier LegalTech privé</strong> à l'utiliser dans un contexte transactionnel. Cette position est une barrière à l'entrée immédiate : obtenir la qualification FC+ prend 6 à 12 mois, et aucun concurrent n'est actuellement engagé dans ce processus pour un usage similaire.<br><br>
+      La combinaison AMF + FC+ crée une <strong style="color:var(--gold-light);">légitimité institutionnelle composée</strong> : accès aux grands comptes, crédibilité pour une levée en série A, et passeport MiCA pour l'expansion européenne.
+    </div>
+  </div>
+
+  <div class="s-label">Utilisation des fonds — 10 000 € à 30 000 €</div>
+  <div class="uses" style="margin-bottom:28px;">
+    <div class="use-row">
+      <div class="use-amount">3 000 €</div>
+      <div>
+        <div class="use-label">Frais AMF + finalisation documentation réglementaire</div>
+        <div class="use-sub">Dépôt officiel du Livre Blanc MiCA Title II, frais de procédure et finalisation juridique</div>
+      </div>
+    </div>
+    <div class="use-row">
+      <div class="use-amount">4 000 €</div>
+      <div>
+        <div class="use-label">Migration infrastructure Render → OVHcloud</div>
+        <div class="use-sub">Exigée pour cohérence avec les déclarations de disponibilité AMF (SLA 99,5 % déclaré dans le Livre Blanc)</div>
+      </div>
+    </div>
+    <div class="use-row">
+      <div class="use-amount">3 000 €</div>
+      <div>
+        <div class="use-label">Runway opérationnel 2 mois — tranche minimum</div>
+        <div class="use-sub">Hébergement, outils, préparation présentation orale AMF</div>
+      </div>
+    </div>
+    <div class="use-row" style="border-color:rgba(201,168,76,0.35);">
+      <div class="use-amount" style="color:var(--gold-light);">+10 000 €</div>
+      <div>
+        <div class="use-label" style="color:var(--gold-light);">Accélération commerciale — tranche optionnelle</div>
+        <div class="use-sub">Premiers contrats B2B, développement pipeline cabinets, onboarding commissaires de justice partenaires</div>
+      </div>
+    </div>
+    <div class="use-row" style="border-color:rgba(201,168,76,0.35);">
+      <div class="use-amount" style="color:var(--gold-light);">+10 000 €</div>
+      <div>
+        <div class="use-label" style="color:var(--gold-light);">Lancement vente tokens + communication — tranche optionnelle</div>
+        <div class="use-sub">Préparation batch MLRCOIN-O post-AMF, marketing institutionnel, relations presse juridique</div>
+      </div>
+    </div>
+    <div class="total-row">
+      <div class="total-label">Fourchette d'investissement</div>
+      <div style="text-align:right;">
+        <div class="total-amount">10 000 € — 30 000 €</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;">minimum 10 000 € · par tranches de 10 000 €</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-label">Ce que ces jalons changent</div>
+  <div class="outcomes" style="margin-bottom:28px;">
+    <div class="outcome">
+      <div class="outcome-num">01</div>
+      <div class="outcome-text">
+        <strong>Seule LegalTech privée qualifiée FC+ en France</strong> — 9 services actuels, tous publics ou parapublics. Trace & Anchor serait le 10e, et le premier à usage transactionnel privé. Délai de replication par un concurrent : minimum 9 mois.
+      </div>
+    </div>
+    <div class="outcome">
+      <div class="outcome-num">02</div>
+      <div class="outcome-text">
+        <strong>Premier service blockchain MiCA + FC+ simultanés en Europe</strong> — combinaison inédite sur le continent. Positionnement institutionnel sans équivalent dans la LegalTech européenne. Argument différenciateur pour les appels d'offres grands comptes.
+      </div>
+    </div>
+    <div class="outcome">
+      <div class="outcome-num">03</div>
+      <div class="outcome-text">
+        <strong>Levée de fonds suivante en position de force</strong> — les deux validations transforment radicalement le profil de risque réglementaire et ouvrent l'accès aux grands comptes, aux institutionnels et au passeport MiCA pour l'expansion européenne.
+      </div>
+    </div>
+    <div class="outcome">
+      <div class="outcome-num">04</div>
+      <div class="outcome-text">
+        <strong>Vente de tokens MLRCOIN-O immédiate post-AMF</strong> — la notification AMF débloque la commercialisation du jeton utilitaire. Premier batch estimé à 100 000 € sur l'exercice, remboursant le bridge dès l'année 1.
+      </div>
+    </div>
+  </div>
+
+  <div class="s-label">Structure de l'investissement</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+    <div class="card">
+      <div class="card-icon">▸ Nature de l'opération</div>
+      <div class="card-body" style="font-size:12px;line-height:1.9;">
+        <strong style="color:var(--gold);">Augmentation de capital avec prime d'émission</strong><br>
+        Delta Multimedia France (SARL)<br>
+        Valorisation pre-money : <strong style="color:var(--off-white);">1 000 000 €</strong><br>
+        Structure : entrée au capital + prime d'émission<br>
+        Pas de prêt, pas de convertible — equity directe et propre.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">▸ Conditions d'entrée</div>
+      <div class="card-body" style="font-size:12px;line-height:1.9;">
+        Ticket minimum : <strong style="color:var(--gold);">10 000 €</strong><br>
+        Ticket maximum : <strong style="color:var(--gold);">30 000 €</strong><br>
+        Par tranches de 10 000 €<br>
+        <strong style="color:var(--off-white);">1 % du capital</strong> par tranche de 10 000 €<br>
+        Objectif de clôture : <strong style="color:var(--off-white);">rapide</strong> — exécution prioritaire
+      </div>
+    </div>
+  </div>
+
+  <div class="s-label">Répartition du capital — post augmentation</div>
+  <div style="background:var(--navy-light);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;">
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;padding:10px 18px;border-bottom:0.5px solid var(--border);">
+      <span>Associé</span><span style="text-align:right;">Actuel</span><span style="text-align:right;">+10k€</span><span style="text-align:right;">+20k€</span><span style="text-align:right;">+30k€</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
+      <span style="color:var(--off-white);">Cyril Barbe <span style="color:var(--muted);font-size:10px;">fondateur</span></span>
+      <span style="text-align:right;color:var(--muted);">75 %</span>
+      <span style="text-align:right;color:var(--muted);">74,25 %</span>
+      <span style="text-align:right;color:var(--muted);">73,5 %</span>
+      <span style="text-align:right;color:var(--muted);">72,75 %</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
+      <span style="color:var(--off-white);">Amnas <span style="color:var(--muted);font-size:10px;">développeur</span></span>
+      <span style="text-align:right;color:var(--muted);">15 %</span>
+      <span style="text-align:right;color:var(--muted);">14,85 %</span>
+      <span style="text-align:right;color:var(--muted);">14,7 %</span>
+      <span style="text-align:right;color:var(--muted);">14,55 %</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
+      <span style="color:var(--off-white);">Thierry <span style="color:var(--muted);font-size:10px;">économiste</span></span>
+      <span style="text-align:right;color:var(--muted);">5 %</span>
+      <span style="text-align:right;color:var(--muted);">4,95 %</span>
+      <span style="text-align:right;color:var(--muted);">4,9 %</span>
+      <span style="text-align:right;color:var(--muted);">4,85 %</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
+      <span style="color:var(--off-white);">Benjamin <span style="color:var(--muted);font-size:10px;">CTO</span></span>
+      <span style="text-align:right;color:var(--muted);">5 %</span>
+      <span style="text-align:right;color:var(--muted);">4,95 %</span>
+      <span style="text-align:right;color:var(--muted);">4,9 %</span>
+      <span style="text-align:right;color:var(--muted);">4,85 %</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;font-size:12px;padding:12px 18px;background:rgba(201,168,76,0.05);border-bottom:0.5px solid var(--border);">
+      <span style="color:var(--gold-light);">Investisseur (vous)</span>
+      <span style="text-align:right;color:var(--muted);">—</span>
+      <span style="text-align:right;color:var(--gold);">1 %</span>
+      <span style="text-align:right;color:var(--gold);">2 %</span>
+      <span style="text-align:right;color:var(--gold);">3 %</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;font-size:11px;padding:10px 18px;color:var(--muted);">
+      <span>Valorisation post-money</span>
+      <span style="text-align:right;">1 000 k€</span>
+      <span style="text-align:right;">1 010 k€</span>
+      <span style="text-align:right;">1 020 k€</span>
+      <span style="text-align:right;">1 030 k€</span>
+    </div>
+  </div>
+
+  <div class="s-label">Modalités pratiques</div>
+  <div class="cta-block" style="margin-bottom: 20px;">
+    <div class="cta-text">
+      Augmentation de capital simple et documentée. <em>Pas de R&D à financer</em> — la plateforme tourne, FC+ est habilité (n°H121417), le dossier AMF est prêt au dépôt. L'investisseur entre à une valorisation pre-money de <em>1M€</em>, avant les deux catalyseurs qui changeront ce profil : notification AMF et commercialisation des tokens MLRCOIN-O.
+    </div>
+    <a class="btn-gold" href="mailto:cyril.barbe@traceandanchor.com?subject=Augmentation%20de%20capital%20-%20Trace%20et%20Anchor">Contacter →</a>
+  </div>
+
+  <div style="text-align:center; padding-bottom: 20px;">
+    <button class="btn-gold" onclick="showPage('p3', document.querySelectorAll('.nav-link')[2])">Voir le prévisionnel →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 3 — PRÉVISIONNEL
+═════════════════════════════════════════════ -->
+<div class="page" id="p3">
+<div class="container">
+
+  <div class="hero-eyebrow">Prévisionnel financier</div>
+  <h2 class="hero-title" style="font-size:clamp(22px,3vw,34px); margin-bottom:8px;">3 ans — post jalons <em>réglementaires</em></h2>
+  <p style="font-size:12px; color:var(--muted); margin-bottom:32px; line-height:1.8;">Trois flux de revenus : forfaits B2B récurrents, usage unitaire pay-per-proof, et vente de tokens MLRCOIN-O sur une fenêtre de <em style="color:var(--gold);">24 mois post-notification AMF</em> (200 000 € étalés sur A1 et A2). À partir de l'année 3, les revenus sont 100 % opérationnels.</p>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-year">Année 1 — 2025</div>
+      <div class="kpi-rev">210 000 €</div>
+      <div class="kpi-sub">5 cabinets signés · tokens mois 1–12 (~8 333 €/mois) · premiers usages unitaires</div>
+      <div class="kpi-rows">
+        <div class="kpi-row"><span class="kpi-row-l">Forfaits B2B</span><span class="kpi-row-v">90 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l">Usage unitaire</span><span class="kpi-row-v">20 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l">Tokens MLRCOIN-O</span><span class="kpi-row-v">100 000 €</span></div>
+      </div>
+      <div class="kpi-tag">Amorçage post-AMF</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-year">Année 2 — 2026</div>
+      <div class="kpi-rev">460 000 €</div>
+      <div class="kpi-sub">18 clients B2B · tokens mois 13–24 (~8 333 €/mois) · montée en gamme FC+</div>
+      <div class="kpi-rows">
+        <div class="kpi-row"><span class="kpi-row-l">Forfaits B2B</span><span class="kpi-row-v">320 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l">Usage unitaire</span><span class="kpi-row-v">40 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l">Tokens MLRCOIN-O</span><span class="kpi-row-v">100 000 €</span></div>
+      </div>
+      <div class="kpi-tag">Traction B2B + FC+</div>
+    </div>
+    <div class="kpi best">
+      <div class="kpi-year">Année 3 — 2027</div>
+      <div class="kpi-rev">1 040 000 €</div>
+      <div class="kpi-sub">40 clients UE · passeport MiCA actif · revenus 100 % opérationnels</div>
+      <div class="kpi-rows">
+        <div class="kpi-row"><span class="kpi-row-l">Forfaits B2B</span><span class="kpi-row-v">960 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l">Usage unitaire</span><span class="kpi-row-v">80 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l">Tokens MLRCOIN-O</span><span class="kpi-row-v" style="color:var(--muted);">— fenêtre close</span></div>
+      </div>
+      <div class="kpi-tag">Passeport MiCA Europe</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="leg-sq" style="background:#c9a84c;"></span>Forfaits B2B</span>
+    <span><span class="leg-sq" style="background:rgba(201,168,76,0.48);"></span>Usage unitaire</span>
+    <span><span class="leg-sq" style="background:rgba(201,168,76,0.18); border:0.5px solid rgba(201,168,76,0.5);"></span>Tokens MLRCOIN-O</span>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="prevChart"></canvas>
+  </div>
+
+  <div class="divider"></div>
+  <div class="s-label">Hypothèses détaillées</div>
+  <div class="hypo-grid">
+    <div class="hypo">
+      <div class="hypo-title">Forfaits B2B</div>
+      <div class="hypo-item">Tarif forfait cabinet : <em>1 500 €/mois</em>, grandes études jusqu'à <em>3 000 €/mois</em></div>
+      <div class="hypo-item">Cible A1 : <em>5 clients</em> — cabinets d'avocats, notaires, créateurs pro</div>
+      <div class="hypo-item">Cible A2 : <em>18 clients</em> — + études CDJ, directions juridiques d'entreprises</div>
+      <div class="hypo-item">Cible A3 : <em>40 clients</em> dont ~30 % hors France via passeport MiCA</div>
+      <div class="hypo-item">5 clients A1 sur 70 000 avocats en France = <em>taux de pénétration 0,007 %</em></div>
+    </div>
+    <div class="hypo">
+      <div class="hypo-title">Tokens MLRCOIN-O</div>
+      <div class="hypo-item">Enveloppe totale : <em>200 000 €</em> étalés sur <em>24 mois</em> post-notification AMF</div>
+      <div class="hypo-item">A1 (mois 1–12) : <em>100 000 €</em> — ~8 333 €/mois, early adopters et institutionnels</div>
+      <div class="hypo-item">A2 (mois 13–24) : <em>100 000 €</em> — ~8 333 €/mois, porteurs FC+ et marché secondaire naissant</div>
+      <div class="hypo-item">A3 : <em>fenêtre close</em> — revenus 100 % opérationnels, profil récurrent pur</div>
+      <div class="hypo-item">Prix calibré pour éviter requalification en instrument financier (MiCA Title II)</div>
+    </div>
+    <div class="hypo">
+      <div class="hypo-title">Structure de coûts</div>
+      <div class="hypo-item">Frais réseau Solana : <em>0,000005 SOL / ancrage</em> — coût marginal quasi nul</div>
+      <div class="hypo-item">Horodatage eIDAS Datasure : <em>0,10 € / certificat</em> — marge 96,7 % sur niveau 2</div>
+      <div class="hypo-item">FranceConnect : <em>gratuit</em> pour le partenaire — marge 100 % sur le composant identité</div>
+      <div class="hypo-item">CDJ : <em>en cours de négociation</em> — modèle de commission envisagé</div>
+    </div>
+    <div class="hypo">
+      <div class="hypo-title">Leviers de croissance</div>
+      <div class="hypo-item">Notification AMF → accès institutionnels, grands comptes juridiques, appels d'offres publics</div>
+      <div class="hypo-item">FC+ → seul service privé qualifié, barrière à l'entrée de <em>9 à 12 mois minimum</em></div>
+      <div class="hypo-item">MiCA passeport → déploiement <em>Allemagne, Belgique, Espagne</em> dès A3 sans nouvelle procédure</div>
+      <div class="hypo-item">Upsell naturel du niveau 1€ vers niveaux <em>+5€ identité</em> et <em>+21€ CDJ</em></div>
+    </div>
+  </div>
+
+  <div class="disclaimer-block">
+    <strong style="color:rgba(255,255,255,0.55);">Avertissement</strong> — Prévisionnel indicatif établi sur la base des hypothèses de déploiement post-jalons réglementaires. Les projections de vente de tokens sont subordonnées à la notification AMF finale et à la conformité continue au règlement MiCA. Les chiffres B2B reposent sur des hypothèses de conversion conservatrices. Ce document ne constitue pas une offre de souscription de valeurs mobilières ou de crypto-actifs. La réalisation des jalons AMF et FranceConnect+ constitue le prérequis de l'ensemble du scénario présenté.
+  </div>
+
+  <div class="divider"></div>
+  <div style="text-align:center; padding-bottom: 20px;">
+    <button class="btn-gold" onclick="showPage('p1', document.querySelectorAll('.nav-link')[0])">← Retour au service</button>
+  </div>
+
+</div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="dot"></div>
+  <span>Fenêtre active — dossier AMF prêt · FranceConnect habilité · La notification AMF est le seul verrou restant · <span id="em"></span></span>
+</div>
+
+<script>
+// email anti-scrape
+(function(){var u='cyril.barbe',d='traceandanchor.com';var el=document.getElementById('em');el.textContent=u+'@'+d;el.style.color='var(--gold)';})();
+</script>
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  if (id === 'p3' && !window._chartBuilt) buildChart();
+}
+
+function buildChart() {
+  window._chartBuilt = true;
+  var ctx = document.getElementById('prevChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Année 1 — 2025', 'Année 2 — 2026', 'Année 3 — 2027'],
+      datasets: [
+        {
+          label: 'Forfaits B2B',
+          data: [90000, 320000, 960000],
+          backgroundColor: 'rgba(201,168,76,0.9)',
+          borderRadius: 0, stack: 'rev'
+        },
+        {
+          label: 'Usage unitaire',
+          data: [20000, 40000, 80000],
+          backgroundColor: 'rgba(201,168,76,0.45)',
+          borderRadius: 0, stack: 'rev'
+        },
+        {
+          label: 'Tokens MLRCOIN-O',
+          data: [100000, 100000, 0],
+          backgroundColor: 'rgba(201,168,76,0.15)',
+          borderColor: 'rgba(201,168,76,0.45)',
+          borderWidth: 1,
+          borderRadius: 4, stack: 'rev'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0e2236',
+          borderColor: 'rgba(201,168,76,0.3)',
+          borderWidth: 1,
+          titleColor: '#c9a84c',
+          bodyColor: '#ffffff',
+          padding: 12,
+          callbacks: {
+            label: function(c) {
+              return ' ' + c.dataset.label + ' : ' + c.parsed.y.toLocaleString('fr-FR') + ' €';
+            },
+            footer: function(items) {
+              var t = items.reduce(function(s,i){ return s + i.parsed.y; }, 0);
+              return 'Total : ' + t.toLocaleString('fr-FR') + ' €';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: { color: 'rgba(255,255,255,0.55)', font: { size: 11, family: 'DM Mono' }, autoSkip: false },
+          grid: { color: 'rgba(201,168,76,0.07)' },
+          border: { color: 'rgba(201,168,76,0.15)' }
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            color: 'rgba(255,255,255,0.55)',
+            font: { size: 11, family: 'DM Mono' },
+            callback: function(v) {
+              if (v >= 1000000) return (v/1000000).toFixed(1) + 'M€';
+              if (v >= 1000) return Math.round(v/1000) + 'k€';
+              return v + '€';
+            }
+          },
+          grid: { color: 'rgba(201,168,76,0.07)' },
+          border: { color: 'rgba(201,168,76,0.15)' }
+        }
+      }
+    }
+  });
+}
+</script>
+<!-- SCRIPT FORCANT L'OUVERTURE DES LIENS EXTERNES (COMPATIBLE LOCAL) -->
+<script>
+(function() {
+  // Attendre que le DOM soit prêt
+  document.addEventListener('DOMContentLoaded', function() {
+    // Sélectionner tous les liens
+    var links = document.querySelectorAll('a');
+    for (var i = 0; i < links.length; i++) {
+      var link = links[i];
+      var href = link.getAttribute('href');
+      if (href && (href.indexOf('http') === 0 || href.indexOf('mailto:') === 0)) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var url = this.getAttribute('href');
+          if (url.indexOf('mailto:') === 0) {
+            window.location.href = url;
+          } else {
+            window.open(url, '_blank', 'noopener,noreferrer');
+          }
+        });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>
