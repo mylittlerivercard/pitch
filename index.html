@@ -283,6 +283,20 @@ nav {
   border-radius: 8px; font-size: 10px; color: rgba(255,255,255,0.32); line-height: 1.8;
 }
 
+/* ── LANG TOGGLE ── */
+.lang-toggle {
+  display: flex; border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.lang-btn {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  letter-spacing: 1.5px; padding: 4px 10px; border: none; cursor: pointer;
+  background: transparent; color: var(--muted); transition: all 0.15s;
+}
+.lang-btn.active { background: rgba(201,168,76,0.15); color: var(--gold); }
+.lang-btn:hover:not(.active) { color: var(--off-white); }
+[data-lang="en"] .fr-text { display: none; }
+[data-lang="fr"] .en-text { display: none; }
+
 /* ── TICKER ── */
 .ticker {
   display: flex; align-items: center; gap: 10px;
@@ -309,17 +323,23 @@ nav {
 }
 </style>
 </head>
-<body>
+<body data-lang="fr">
 
 <!-- NAV -->
 <nav>
   <div class="nav-logo">Trace <span>&</span> Anchor</div>
   <div class="nav-links">
-    <button class="nav-link active" onclick="showPage('p1', this)">Le service</button>
-    <button class="nav-link" onclick="showPage('p2', this)">Pitch Seed</button>
-    <button class="nav-link" onclick="showPage('p3', this)">Prévisionnel</button>
+    <button class="nav-link active" onclick="showPage('p1', this)" data-page="1"><span class="fr-text">Le service</span><span class="en-text">The service</span></button>
+    <button class="nav-link" onclick="showPage('p2', this)" data-page="2"><span class="fr-text">Pitch Seed</span><span class="en-text">Seed Pitch</span></button>
+    <button class="nav-link" onclick="showPage('p3', this)" data-page="3"><span class="fr-text">Prévisionnel</span><span class="en-text">Financials</span></button>
   </div>
-  <div class="nav-badge">Seed — 1 000 000 €</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('fr', this)">FR</button>
+      <button class="lang-btn" onclick="setLang('en', this)">EN</button>
+    </div>
+    <div class="nav-badge">Seed — 1 000 000 €</div>
+  </div>
 </nav>
 
 <!-- ════════════════════════════════════════════
@@ -328,13 +348,13 @@ nav {
 <div class="page active" id="p1">
 <div class="container">
 
-  <div class="hero-eyebrow">Trace & Anchor — Présentation</div>
-  <h1 class="hero-title">La preuve numérique<br><em>opposable,</em> par conception.</h1>
+  <div class="hero-eyebrow"><span class="fr-text">Trace & Anchor — Présentation</span><span class="en-text">Trace & Anchor — Overview</span></div>
+  <h1 class="hero-title"><span class="fr-text">La preuve numérique<br><em>opposable,</em> par conception.</span><span class="en-text">Digital proof<br><em>court-ready,</em> by design.</span></h1>
   <p class="hero-body">
-    Trace & Anchor est une plateforme LegalTech / CyberSécurité permettant à des professionnels du droit, des créateurs et des entreprises de générer des preuves numériques cryptographiquement inviolables — sans jamais transmettre leurs fichiers à nos serveurs. L'empreinte SHA-256 est calculée localement, ancrée sur la blockchain Solana, et certifiée par un horodatage qualifié eIDAS.
+  <span class="fr-text">Trace & Anchor est une plateforme LegalTech / CyberSécurité permettant à des professionnels du droit, des créateurs et des entreprises de générer des preuves numériques cryptographiquement inviolables — sans jamais transmettre leurs fichiers à nos serveurs. L'empreinte SHA-256 est calculée localement, ancrée sur la blockchain Solana, et certifiée par un horodatage qualifié eIDAS.</span><span class="en-text">Trace & Anchor is a LegalTech / Cybersecurity platform enabling legal professionals, creators and businesses to generate cryptographically tamper-proof digital evidence — without ever transmitting their files to our servers. The SHA-256 fingerprint is computed locally, anchored on Solana, and certified by an eIDAS-qualified timestamp.</span>
   </p>
 
-  <div class="s-label">Signaux de crédibilité externe</div>
+  <div class="s-label"><span class="fr-text">Signaux de crédibilité externe</span><span class="en-text">External credibility signals</span></div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:28px;">
     <div class="card" style="text-align:center;padding:14px;">
       <div style="font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">Radar 2026</div>
@@ -353,27 +373,27 @@ nav {
     </div>
   </div>
 
-  <div class="s-label">Le mécanisme</div>
+  <div class="s-label"><span class="fr-text">Le mécanisme</span><span class="en-text">How it works</span></div>
   <div class="what-grid" style="margin-bottom:16px;">
     <div class="card">
-      <div class="card-icon">▸ Architecture hash-only</div>
-      <div class="card-title"><a href="https://www.traceandanchor.com" target="_blank">Trace & Anchor ↗</a> — certifier l'existence</div>
+      <div class="card-icon"><span class="fr-text">▸ Architecture hash-only</span><span class="en-text">▸ Hash-only architecture</span></div>
+      <div class="card-title"><a href="https://www.traceandanchor.com" target="_blank">Trace & Anchor ↗</a> — <span class="fr-text">certifier l'existence</span><span class="en-text">certifying existence</span></div>
       <div class="card-body">L'empreinte cryptographique (SHA-256) est calculée localement sur l'appareil de l'utilisateur. Le fichier source n'est jamais transmis. Cette empreinte est ancrée de façon immuable sur Solana avec un horodatage certifié eIDAS.</div>
     </div>
     <div class="card">
-      <div class="card-icon">▸ Opposabilité juridique</div>
-      <div class="card-title">Une preuve qui tient devant un juge</div>
+      <div class="card-icon"><span class="fr-text">▸ Opposabilité juridique</span><span class="en-text">▸ Legal enforceability</span></div>
+      <div class="card-title"><span class="fr-text">Une preuve qui tient devant un juge</span><span class="en-text">Proof that holds up in court</span></div>
       <div class="card-body">Horodatage qualifié eIDAS art. 42 (présomption légale de date), identité certifiée via FranceConnect (schéma notifié eIDAS art. 9), ancrage Solana vérifiable publiquement. Quatre lacunes probatoires adressées en un seul service.</div>
     </div>
   </div>
 
   <div class="divider"></div>
-  <div class="s-label">Quatre niveaux de protection</div>
+  <div class="s-label"><span class="fr-text">Quatre niveaux de protection</span><span class="en-text">Four layers of protection</span></div>
   <div class="levels">
     <div class="level">
       <div class="level-price">1 €</div>
       <div>
-        <div class="level-name">Ancrage blockchain Solana</div>
+        <div class="level-name"><span class="fr-text">Ancrage blockchain Solana</span><span class="en-text">Solana Blockchain Anchoring</span></div>
         <div class="level-desc">Empreinte SHA-256 et horodatage gravés de façon immuable sur Solana. Preuve d'existence de base, instantanée, vérifiable publiquement et indépendamment de DMMF.</div>
         <div class="level-cost">Coût réseau : ~0,000005 SOL par transaction — marge opérationnelle maximale.</div>
       </div>
@@ -389,7 +409,7 @@ nav {
     <div class="level">
       <div class="level-price">+5 €</div>
       <div>
-        <div class="level-name">Identité certifiée via FranceConnect</div>
+        <div class="level-name"><span class="fr-text">Identité certifiée via FranceConnect</span><span class="en-text">State-verified identity via FranceConnect</span></div>
         <div class="level-desc">Association de l'identité officielle (état civil) à la preuve. L'auteur est ancré à son document à l'instant certifié. Schéma d'identification notifié eIDAS niveau substantiel.</div>
         <div class="level-cost">FranceConnect est gratuit pour le service partenaire — marge à 100 % sur ce composant.</div>
         <div class="level-badge">→ Habilitation DINUM n°30486159 — valable jusqu'en 2031</div>
@@ -398,7 +418,7 @@ nav {
     <div class="level premium">
       <div class="level-price">~30 €</div>
       <div>
-        <div class="level-name">Constat par Commissaire de Justice</div>
+        <div class="level-name"><span class="fr-text">Constat par Commissaire de Justice</span><span class="en-text">Bailiff certification (Commissaire de Justice)</span></div>
         <div class="level-desc">Batch quotidien signé par un officier ministériel. Force probante maximale, directement exploitable en contentieux. Option C activée sur le certificat avec référence PV + numéro de ligne.</div>
         <div class="level-cost">Tarif CJ en cours de négociation. Prix client cible : 30 € TTC.</div>
         <div class="level-badge">→ Niveau procédural — litiges complexes et actes authentiques</div>
@@ -407,13 +427,13 @@ nav {
   </div>
 
   <div class="divider"></div>
-  <div class="s-label">Crédibilité externe</div>
+  <div class="s-label"><span class="fr-text">Crédibilité externe</span><span class="en-text">External credibility</span></div>
   <a class="vdj" href="https://www.village-justice.com/articles/preuve-numerique-blockchain-que-change-jurisprudence-2025-pour-les,56231.html" target="_blank">
     <div class="vdj-left">
       <div class="vdj-logo">VdJ</div>
       <div>
-        <div class="vdj-title">Publication — Village de la Justice</div>
-        <div class="vdj-sub">Magazine de référence des professionnels du droit. Article sur la preuve numérique blockchain et la jurisprudence 2025, sélectionné et publié par le comité éditorial. Réf. TJ Marseille, mars 2025, AZ Factory c/ Valeria Moda.</div>
+        <div class="vdj-title"><span class="fr-text">Publication — Village de la Justice</span><span class="en-text">Publication — Village de la Justice</span></div>
+        <div class="vdj-sub"><span class="fr-text">Magazine de référence des professionnels du droit. Article sur la preuve numérique blockchain et la jurisprudence 2025, sélectionné et publié par le comité éditorial. Réf. TJ Marseille, mars 2025, AZ Factory c/ Valeria Moda.</span><span class="en-text">Reference magazine for French legal professionals. Article on blockchain digital proof and 2025 case law, selected and published by the editorial committee. Ref. Commercial Court Marseille, March 2025, AZ Factory v. Valeria Moda.</span></div>
       </div>
     </div>
     <div class="vdj-arrow">↗</div>
@@ -421,7 +441,7 @@ nav {
 
   <div class="divider"></div>
   <div style="text-align:center; padding-bottom: 20px;">
-    <button class="btn-gold" onclick="showPage('p2', document.querySelectorAll('.nav-link')[1])">Voir le pitch seed →</button>
+    <button class="btn-gold" onclick="showPage('p2', document.querySelectorAll('.nav-link')[1])"><span class="fr-text">Voir le pitch seed →</span><span class="en-text">See the seed pitch →</span></button>
   </div>
 
 </div>
@@ -434,17 +454,17 @@ nav {
 <div class="container">
 
   <div class="pitch-hero">
-    <div class="hero-eyebrow" style="margin-bottom:14px;">Levée de fonds Seed — Augmentation de capital</div>
-    <h2 class="pitch-title">En production.<br><em>Commercialisation</em> à accélérer.</h2>
+    <div class="hero-eyebrow" style="margin-bottom:14px;"><span class="fr-text">Levée de fonds Seed — Augmentation de capital</span><span class="en-text">Seed fundraising — Capital increase</span></div>
+    <h2 class="pitch-title"><span class="fr-text">En production.<br><em>Commercialisation</em> à accélérer.</span><span class="en-text">Live in production.<br><em>Commercial</em> acceleration.</span></h2>
     <p class="pitch-sub">Le service est live depuis juillet 2026. L'habilitation FranceConnect est obtenue (DINUM n°30486159). La notification AMF MiCA est en cours — prévue septembre 2026. Le Livre Blanc est en cours de traduction au format iXBRL. Nous levons 1 000 000 € pour financer la phase d'accélération commerciale en France et en Europe.</p>
   </div>
 
-  <div class="s-label">Jalons — état d'avancement</div>
+  <div class="s-label"><span class="fr-text">Jalons — état d'avancement</span><span class="en-text">Milestones — current status</span></div>
   <div class="milestones" style="margin-bottom:28px;">
     <div class="milestone" style="border-color:rgba(201,168,76,0.55); background:rgba(201,168,76,0.05);">
       <div class="milestone-title" style="display:flex;align-items:center;gap:8px;">
         <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;"></span>
-        Service en production — juillet 2026
+        <span class="fr-text">Service en production — juillet 2026</span><span class="en-text">Live in production — July 2026</span>
       </div>
       <div class="milestone-detail">Plateforme live. Premier client professionnel onboardé (avocat, contrat annuel 250 € TTC). Sélection Radar Cybersécurité 2026 Wavestone × Bpifrance (VivaTech, 19 juin 2026). Habilitation FranceConnect DINUM n°30486159 valable jusqu'en 2031.</div>
       <div class="milestone-badge">✓ Production — traction démarrée</div>
@@ -452,14 +472,14 @@ nav {
     <div class="milestone">
       <div class="milestone-title" style="display:flex;align-items:center;gap:8px;">
         <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(201,168,76,0.4);border:1px solid var(--gold);flex-shrink:0;"></span>
-        Notification AMF / MiCA Title II — septembre 2026
+        <span class="fr-text">Notification AMF / MiCA Title II — septembre 2026</span><span class="en-text">AMF notification / MiCA Title II — September 2026</span>
       </div>
       <div class="milestone-detail">Livre Blanc v4.3 finalisé (97/100 score conformité interne). DTI provisoire VMPCNBRQ9 — DTI définitif 403QMP94X obtenu. Traduction en cours au format iXBRL ESMA. La notification débloque la commercialisation du jeton utilitaire MLRCOIN-O.</div>
       <div class="milestone-badge">→ En cours · iXBRL · Sept. 2026</div>
     </div>
   </div>
 
-  <div class="s-label">Le moat réglementaire — barrière à l'entrée</div>
+  <div class="s-label"><span class="fr-text">Le moat réglementaire — barrière à l'entrée</span><span class="en-text">Regulatory moat — barriers to entry</span></div>
   <div class="card" style="margin-bottom:28px;">
     <div class="card-body" style="font-size:12px; line-height:1.9;">
       Trois barrières à l'entrée cumulées, chacune nécessitant 6 à 18 mois de procédure :<br><br>
@@ -469,77 +489,77 @@ nav {
     </div>
   </div>
 
-  <div class="s-label">Utilisation des fonds — 1 000 000 €</div>
+  <div class="s-label"><span class="fr-text">Utilisation des fonds — 1 000 000 €</span><span class="en-text">Use of funds — €1,000,000</span></div>
   <div class="uses" style="margin-bottom:28px;">
     <div class="use-row">
       <div class="use-amount">400 000 €</div>
       <div>
-        <div class="use-label">Accélération commerciale</div>
-        <div class="use-sub">Acquisition des premiers clients professionnels (avocats, notaires, IP, compliance) · pipeline B2B · partenariats prescripteurs</div>
+        <div class="use-label"><span class="fr-text">Accélération commerciale</span><span class="en-text">Commercial acceleration</span></div>
+        <div class="use-sub"><span class="fr-text">Acquisition des premiers clients professionnels (avocats, notaires, IP, compliance) · pipeline B2B · partenariats prescripteurs</span><span class="en-text">Acquiring first professional clients (lawyers, notaries, IP, compliance) · B2B pipeline · referral partnerships</span></div>
       </div>
     </div>
     <div class="use-row">
       <div class="use-amount">350 000 €</div>
       <div>
-        <div class="use-label">Produit & tech</div>
-        <div class="use-sub">Couche Commissaire de Justice (niveau 4) en production · API B2B · mobile · intégrations métiers</div>
+        <div class="use-label"><span class="fr-text">Produit & tech</span><span class="en-text">Product & tech</span></div>
+        <div class="use-sub"><span class="fr-text">Couche Commissaire de Justice (niveau 4) en production · API B2B · mobile · intégrations métiers</span><span class="en-text">Bailiff layer (level 4) production rollout · B2B API · mobile · vertical integrations</span></div>
       </div>
     </div>
     <div class="use-row">
       <div class="use-amount">150 000 €</div>
       <div>
-        <div class="use-label">Réglementaire & juridique</div>
-        <div class="use-sub">Finalisation notification AMF · conformité eIDAS continue · groundwork expansion européenne (passeport MiCA)</div>
+        <div class="use-label"><span class="fr-text">Réglementaire & juridique</span><span class="en-text">Regulatory & legal</span></div>
+        <div class="use-sub"><span class="fr-text">Finalisation notification AMF · conformité eIDAS continue · groundwork expansion européenne (passeport MiCA)</span><span class="en-text">AMF notification finalization · ongoing eIDAS compliance · European expansion groundwork (MiCA passport)</span></div>
       </div>
     </div>
     <div class="use-row">
       <div class="use-amount">100 000 €</div>
       <div>
-        <div class="use-label">Opérations & équipe</div>
-        <div class="use-sub">5e poste multisig (EXT) · recrutement commercial · scaling infrastructure OVHcloud</div>
+        <div class="use-label"><span class="fr-text">Opérations & équipe</span><span class="en-text">Operations & team</span></div>
+        <div class="use-sub"><span class="fr-text">5e poste multisig (EXT) · recrutement commercial · scaling infrastructure OVHcloud</span><span class="en-text">5th multisig position (EXT) · sales hire · OVHcloud infrastructure scaling</span></div>
       </div>
     </div>
     <div class="total-row">
-      <div class="total-label">Levée Seed</div>
+      <div class="total-label"><span class="fr-text">Levée Seed</span><span class="en-text">Seed Round</span></div>
       <div style="text-align:right;">
         <div class="total-amount">1 000 000 €</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px;">Augmentation de capital avec prime d'émission · pre-money 250 000 €</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;"><span class="fr-text">Augmentation de capital avec prime d'émission · pre-money 250 000 €</span><span class="en-text">Capital increase with share premium · pre-money €250,000</span></div>
       </div>
     </div>
   </div>
 
-  <div class="s-label">Ce que cette levée change</div>
+  <div class="s-label"><span class="fr-text">Ce que cette levée change</span><span class="en-text">What this raise changes</span></div>
   <div class="outcomes" style="margin-bottom:28px;">
     <div class="outcome">
       <div class="outcome-num">01</div>
       <div class="outcome-text">
-        <strong>Passage à l'échelle commerciale immédiat</strong> — le service est live, les barrières réglementaires sont en place. La levée finance la commercialisation, pas la construction. Délai de time-to-revenue : immédiat.
+        <strong><span class="fr-text">Passage à l'échelle commerciale immédiat</span><span class="en-text">Immediate commercial scale-up</span></strong> — <span class="fr-text">le service est live, les barrières réglementaires sont en place. La levée finance la commercialisation, pas la construction. Délai de time-to-revenue : immédiat.</span><span class="en-text">the service is live, regulatory barriers are in place. The raise funds commercialization, not construction. Time-to-revenue: immediate.</span>
       </div>
     </div>
     <div class="outcome">
       <div class="outcome-num">02</div>
       <div class="outcome-text">
-        <strong>Passeport MiCA Europe</strong> — notification AMF (sept. 2026) ouvre l'accès aux 27 marchés UE sans nouvelle procédure nationale. Expansion Allemagne, Belgique, Espagne dès 2027.
+        <strong><span class="fr-text">Passeport MiCA Europe</span><span class="en-text">MiCA European passport</span></strong> — <span class="fr-text">notification AMF (sept. 2026) ouvre l'accès aux 27 marchés UE sans nouvelle procédure nationale. Expansion Allemagne, Belgique, Espagne dès 2027.</span><span class="en-text">AMF notification (Sept. 2026) opens access to 27 EU markets without new national procedure. Expansion to Germany, Belgium, Spain from 2027.</span>
       </div>
     </div>
     <div class="outcome">
       <div class="outcome-num">03</div>
       <div class="outcome-text">
-        <strong>Profil de risque transformé</strong> — deux validations institutionnelles (FranceConnect + AMF) changent radicalement le profil pour une Série A. Accès grands comptes, institutionnels, appels d'offres publics.
+        <strong><span class="fr-text">Profil de risque transformé</span><span class="en-text">Transformed risk profile</span></strong> — <span class="fr-text">deux validations institutionnelles (FranceConnect + AMF) changent radicalement le profil pour une Série A. Accès grands comptes, institutionnels, appels d'offres publics.</span><span class="en-text">two institutional validations (FranceConnect + AMF) radically change the Series A profile. Access to enterprise accounts, institutions, public tenders.</span>
       </div>
     </div>
     <div class="outcome">
       <div class="outcome-num">04</div>
       <div class="outcome-text">
-        <strong>Revenus tokens MLRCOIN-O dès post-AMF</strong> — 200 000 € étalés sur 24 mois. Flux non dilutif complémentaire aux forfaits B2B récurrents.
+        <strong><span class="fr-text">Revenus tokens MLRCOIN-O dès post-AMF</span><span class="en-text">MLRCOIN-O token revenue from post-AMF</span></strong> — <span class="fr-text">200 000 € étalés sur 24 mois. Flux non dilutif complémentaire aux forfaits B2B récurrents.</span><span class="en-text">€200,000 spread over 24 months. Non-dilutive complementary stream alongside recurring B2B subscriptions.</span>
       </div>
     </div>
   </div>
 
-  <div class="s-label">Structure de l'investissement</div>
+  <div class="s-label"><span class="fr-text">Structure de l'investissement</span><span class="en-text">Investment structure</span></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
     <div class="card">
-      <div class="card-icon">▸ Nature de l'opération</div>
+      <div class="card-icon"><span class="fr-text">▸ Nature de l'opération</span><span class="en-text">▸ Nature of the operation</span></div>
       <div class="card-body" style="font-size:12px;line-height:1.9;">
         <strong style="color:var(--gold);">Augmentation de capital avec prime d'émission</strong><br>
         Delta Multimedia France (SARL)<br>
@@ -549,7 +569,7 @@ nav {
       </div>
     </div>
     <div class="card">
-      <div class="card-icon">▸ Cap table post-opération</div>
+      <div class="card-icon"><span class="fr-text">▸ Cap table post-opération</span><span class="en-text">▸ Post-operation cap table</span></div>
       <div class="card-body" style="font-size:12px;line-height:1.9;">
         Cyril Barbe (fondateur) : <strong style="color:var(--gold);">63 %</strong><br>
         Muhammed Amnas (dev Solana) : <strong style="color:var(--gold);">20 %</strong><br>
@@ -560,18 +580,18 @@ nav {
     </div>
   </div>
 
-  <div class="s-label">Répartition du capital — post augmentation 1M€</div>
+  <div class="s-label"><span class="fr-text">Répartition du capital — post augmentation 1M€</span><span class="en-text">Cap table — post €1M raise</span></div>
   <div style="background:var(--navy-light);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;">
     <div style="display:grid;grid-template-columns:2.5fr 1fr 1fr;font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;padding:10px 18px;border-bottom:0.5px solid var(--border);">
       <span>Associé</span><span style="text-align:right;">Actuel</span><span style="text-align:right;">Post-levée</span>
     </div>
     <div style="display:grid;grid-template-columns:2.5fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
-      <span style="color:var(--off-white);">Cyril Barbe <span style="color:var(--muted);font-size:10px;">fondateur · gérant</span></span>
+      <span style="color:var(--off-white);">Cyril Barbe <span style="color:var(--muted);font-size:10px;"><span class="fr-text">fondateur · gérant</span><span class="en-text">founder · CEO</span></span></span>
       <span style="text-align:right;color:var(--muted);">63 %</span>
       <span style="text-align:right;color:var(--muted);">~56 %</span>
     </div>
     <div style="display:grid;grid-template-columns:2.5fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
-      <span style="color:var(--off-white);">Muhammed Amnas <span style="color:var(--muted);font-size:10px;">développeur Solana/Rust</span></span>
+      <span style="color:var(--off-white);">Muhammed Amnas <span style="color:var(--muted);font-size:10px;"><span class="fr-text">développeur Solana/Rust</span><span class="en-text">Solana/Rust developer</span></span></span>
       <span style="text-align:right;color:var(--muted);">20 %</span>
       <span style="text-align:right;color:var(--muted);">~18 %</span>
     </div>
@@ -581,37 +601,37 @@ nav {
       <span style="text-align:right;color:var(--muted);">~6 %</span>
     </div>
     <div style="display:grid;grid-template-columns:2.5fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
-      <span style="color:var(--off-white);">Thierry Moniquet <span style="color:var(--muted);font-size:10px;">économiste · compliance</span></span>
+      <span style="color:var(--off-white);">Thierry Moniquet <span style="color:var(--muted);font-size:10px;"><span class="fr-text">économiste · compliance</span><span class="en-text">economist · compliance</span></span></span>
       <span style="text-align:right;color:var(--muted);">5 %</span>
       <span style="text-align:right;color:var(--muted);">~4,5 %</span>
     </div>
     <div style="display:grid;grid-template-columns:2.5fr 1fr 1fr;font-size:12px;padding:12px 18px;border-bottom:0.5px solid var(--border);">
-      <span style="color:var(--off-white);">EXT multisig <span style="color:var(--muted);font-size:10px;">recrutement en cours</span></span>
+      <span style="color:var(--off-white);">EXT multisig <span style="color:var(--muted);font-size:10px;"><span class="fr-text">recrutement en cours</span><span class="en-text">recruitment in progress</span></span></span>
       <span style="text-align:right;color:var(--muted);">5 %</span>
       <span style="text-align:right;color:var(--muted);">~4,5 %</span>
     </div>
     <div style="display:grid;grid-template-columns:2.5fr 1fr 1fr;font-size:12px;padding:12px 18px;background:rgba(201,168,76,0.05);border-bottom:0.5px solid var(--border);">
-      <span style="color:var(--gold-light);">Investisseurs Seed</span>
+      <span style="color:var(--gold-light);"><span class="fr-text">Investisseurs Seed</span><span class="en-text">Seed investors</span></span>
       <span style="text-align:right;color:var(--muted);">—</span>
       <span style="text-align:right;color:var(--gold);">~11 %</span>
     </div>
     <div style="display:grid;grid-template-columns:2.5fr 1fr 1fr;font-size:11px;padding:10px 18px;color:var(--muted);">
-      <span>Valorisation post-money</span>
+      <span><span class="fr-text">Valorisation post-money</span><span class="en-text">Post-money valuation</span></span>
       <span style="text-align:right;">250 k€</span>
       <span style="text-align:right;color:var(--gold);">1 250 k€</span>
     </div>
   </div>
 
-  <div class="s-label">Contact</div>
+  <div class="s-label"><span class="fr-text">Contact</span><span class="en-text">Contact</span></div>
   <div class="cta-block" style="margin-bottom: 20px;">
     <div class="cta-text">
-      Service en production, premier client signé, barrières réglementaires obtenues. L'investisseur entre <em>avant</em> la notification AMF (sept. 2026) et <em>avant</em> la montée en régime commerciale — à une valorisation pre-money de <em>250 000 €</em>.
+      <span class="fr-text">Service en production, premier client signé, barrières réglementaires obtenues. L'investisseur entre <em>avant</em> la notification AMF (sept. 2026) et <em>avant</em> la montée en régime commerciale — à une valorisation pre-money de <em>250 000 €</em>.</span><span class="en-text">Service live, first client signed, regulatory barriers secured. The investor enters <em>before</em> the AMF notification (Sept. 2026) and <em>before</em> commercial ramp-up — at a pre-money valuation of <em>€250,000</em>.</span>
     </div>
     <a class="btn-gold" href="mailto:cyril.barbe@traceandanchor.com?subject=Levée%20Seed%20-%20Trace%20%26%20Anchor">Contacter →</a>
   </div>
 
   <div style="text-align:center; padding-bottom: 20px;">
-    <button class="btn-gold" onclick="showPage('p3', document.querySelectorAll('.nav-link')[2])">Voir le prévisionnel →</button>
+    <button class="btn-gold" onclick="showPage('p3', document.querySelectorAll('.nav-link')[2])"><span class="fr-text">Voir le prévisionnel →</span><span class="en-text">See the financials →</span></button>
   </div>
 
 </div>
@@ -623,8 +643,8 @@ nav {
 <div class="page" id="p3">
 <div class="container">
 
-  <div class="hero-eyebrow">Prévisionnel financier</div>
-  <h2 class="hero-title" style="font-size:clamp(22px,3vw,34px); margin-bottom:8px;">3 ans — post levée <em>Seed</em></h2>
+  <div class="hero-eyebrow"><span class="fr-text">Prévisionnel financier</span><span class="en-text">Financial projections</span></div>
+  <h2 class="hero-title" style="font-size:clamp(22px,3vw,34px); margin-bottom:8px;"><span class="fr-text">3 ans — post levée <em>Seed</em></span><span class="en-text">3 years — post <em>Seed</em> raise</span></h2>
   <p style="font-size:12px; color:var(--muted); margin-bottom:32px; line-height:1.8;">Trois flux de revenus : forfaits B2B récurrents (avocats, notaires, IP, compliance), usage unitaire pay-per-proof, et vente de tokens MLRCOIN-O sur une fenêtre de <em style="color:var(--gold);">24 mois post-notification AMF</em> (200 000 € étalés sur A1 et A2). À partir de l'année 3, les revenus sont 100 % opérationnels.</p>
 
   <div class="kpi-grid">
@@ -633,11 +653,11 @@ nav {
       <div class="kpi-rev">520 000 €</div>
       <div class="kpi-sub">15 clients signés · tokens post-AMF · montée en gamme FC</div>
       <div class="kpi-rows">
-        <div class="kpi-row"><span class="kpi-row-l">Forfaits B2B</span><span class="kpi-row-v">300 000 €</span></div>
-        <div class="kpi-row"><span class="kpi-row-l">Usage unitaire</span><span class="kpi-row-v">120 000 €</span></div>
-        <div class="kpi-row"><span class="kpi-row-l">Tokens MLRCOIN-O</span><span class="kpi-row-v">100 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l"><span class="fr-text">Forfaits B2B</span><span class="en-text">B2B subscriptions</span></span><span class="kpi-row-v">300 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l"><span class="fr-text">Usage unitaire</span><span class="en-text">Pay-per-proof</span></span><span class="kpi-row-v">120 000 €</span></div>
+        <div class="kpi-row"><span class="kpi-row-l"><span class="fr-text">Tokens MLRCOIN-O</span><span class="en-text">MLRCOIN-O tokens</span></span><span class="kpi-row-v">100 000 €</span></div>
       </div>
-      <div class="kpi-tag">Traction B2B France</div>
+      <div class="kpi-tag"><span class="fr-text">Traction B2B France</span><span class="en-text">B2B France traction</span></div>
     </div>
     <div class="kpi">
       <div class="kpi-year">Année 2 — 2028</div>
@@ -648,7 +668,7 @@ nav {
         <div class="kpi-row"><span class="kpi-row-l">Usage unitaire</span><span class="kpi-row-v">250 000 €</span></div>
         <div class="kpi-row"><span class="kpi-row-l">Tokens MLRCOIN-O</span><span class="kpi-row-v">100 000 €</span></div>
       </div>
-      <div class="kpi-tag">Passeport MiCA actif</div>
+      <div class="kpi-tag"><span class="fr-text">Passeport MiCA actif</span><span class="en-text">MiCA passport active</span></div>
     </div>
     <div class="kpi best">
       <div class="kpi-year">Année 3 — 2029</div>
@@ -659,7 +679,7 @@ nav {
         <div class="kpi-row"><span class="kpi-row-l">Usage unitaire</span><span class="kpi-row-v">300 000 €</span></div>
         <div class="kpi-row"><span class="kpi-row-l">Tokens MLRCOIN-O</span><span class="kpi-row-v" style="color:var(--muted);">— fenêtre close</span></div>
       </div>
-      <div class="kpi-tag">Série A · Europe</div>
+      <div class="kpi-tag"><span class="fr-text">Série A · Europe</span><span class="en-text">Series A · Europe</span></div>
     </div>
   </div>
 
@@ -673,13 +693,13 @@ nav {
   </div>
 
   <div class="divider"></div>
-  <div class="s-label">Hypothèses détaillées</div>
+  <div class="s-label"><span class="fr-text">Hypothèses détaillées</span><span class="en-text">Detailed assumptions</span></div>
   <div class="hypo-grid">
     <div class="hypo">
       <div class="hypo-title">Forfaits B2B</div>
-      <div class="hypo-item">Formule Lancement : <em>500 €/an</em> · 1 000 ancrages inclus</div>
-      <div class="hypo-item">Formule Cabinet : <em>1 300 €/an</em> · 3 000 ancrages — recommandé</div>
-      <div class="hypo-item">Formule Entreprise : <em>2 900 €/an</em> · 8 000 ancrages</div>
+      <div class="hypo-item"><span class="fr-text">Formule Lancement :</span><span class="en-text">Launch plan:</span> <em>500 €/an</em> · 1 000 ancrages inclus</div>
+      <div class="hypo-item"><span class="fr-text">Formule Cabinet :</span><span class="en-text">Firm plan:</span> <em>1 300 €/an</em> · 3 000 ancrages — recommandé</div>
+      <div class="hypo-item"><span class="fr-text">Formule Entreprise :</span><span class="en-text">Enterprise plan:</span> <em>2 900 €/an</em> · 8 000 ancrages</div>
       <div class="hypo-item">A1 : <em>15 clients</em> · A2 : <em>35 clients</em> · A3 : <em>80 clients</em> dont ~30 % UE</div>
       <div class="hypo-item">80 clients sur 70 000 avocats FR = <em>taux de pénétration 0,11 %</em></div>
     </div>
@@ -692,14 +712,14 @@ nav {
       <div class="hypo-item">Hard cap : <em>10,5 milliards</em> de tokens · 0 décimales · MiCA Title II</div>
     </div>
     <div class="hypo">
-      <div class="hypo-title">Structure de coûts</div>
+      <div class="hypo-title"><span class="fr-text">Structure de coûts</span><span class="en-text">Cost structure</span></div>
       <div class="hypo-item">Réseau Solana : <em>~0,000005 SOL / ancrage</em> — coût marginal quasi nul</div>
       <div class="hypo-item">Horodatage eIDAS Datasure : <em>0,10 € / certificat</em> — marge 96,7 %</div>
       <div class="hypo-item">FranceConnect : <em>gratuit</em> pour le partenaire — marge 100 % identité</div>
       <div class="hypo-item">Niveau CJ : modèle commission en négociation avec études partenaires</div>
     </div>
     <div class="hypo">
-      <div class="hypo-title">Leviers de croissance</div>
+      <div class="hypo-title"><span class="fr-text">Leviers de croissance</span><span class="en-text">Growth levers</span></div>
       <div class="hypo-item">Notification AMF → accès institutionnels, grands comptes, appels d'offres publics</div>
       <div class="hypo-item">FranceConnect → seul service privé habilité à usage transactionnel</div>
       <div class="hypo-item">MiCA passeport → <em>Allemagne, Belgique, Espagne</em> dès A2 sans nouvelle procédure</div>
@@ -713,7 +733,7 @@ nav {
 
   <div class="divider"></div>
   <div style="text-align:center; padding-bottom: 20px;">
-    <button class="btn-gold" onclick="showPage('p1', document.querySelectorAll('.nav-link')[0])">← Retour au service</button>
+    <button class="btn-gold" onclick="showPage('p1', document.querySelectorAll('.nav-link')[0])"><span class="fr-text">← Retour au service</span><span class="en-text">← Back to service</span></button>
   </div>
 
 </div>
@@ -722,13 +742,25 @@ nav {
 <!-- TICKER -->
 <div class="ticker">
   <div class="dot"></div>
-  <span>Production live · Wavestone Radar Cybersécurité 2026 · FranceConnect DINUM n°30486159 · Notification AMF sept. 2026 · Levée Seed 1 000 000 € · <span id="em"></span></span>
+  <span><span class="fr-text">Production live · Wavestone Radar Cybersécurité 2026 · FranceConnect DINUM n°30486159 · Notification AMF sept. 2026 · Levée Seed 1 000 000 € · </span><span class="en-text"><span class="fr-text">Production live · Wavestone Radar Cybersécurité 2026 · FranceConnect DINUM n°30486159 · Notification AMF sept. 2026 · Levée Seed 1 000 000 € · </span><span class="en-text">Live in production · Wavestone Cybersecurity Radar 2026 · FranceConnect DINUM #30486159 · AMF notification Sept. 2026 · Seed raise €1,000,000 · </span></span><span id="em"></span></span>
 </div>
 
 <script>
 (function(){var u='cyril.barbe',d='traceandanchor.com';var el=document.getElementById('em');el.textContent=u+'@'+d;el.style.color='var(--gold)';})();
 </script>
 <script>
+function setLang(lang, btn) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Mettre à jour les labels de nav
+  var labels = [
+    {fr:'Le service', en:'The service'},
+    {fr:'Pitch Seed', en:'Seed Pitch'},
+    {fr:'Prévisionnel', en:'Financials'}
+  ];
+}
+
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
