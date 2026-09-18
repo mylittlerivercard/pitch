@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIVICA · Carte & dashboard territorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Public+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2E9; --paper-2:#EDE8DA;
+    --ink:#182430; --muted:#5B6472; --muted-2:#7A8290;
+    --blue:#1B3E63; --blue-2:#2F6690; --blue-soft:rgba(27,62,99,.08);
+    --terra:#B85A2A; --terra-soft:rgba(184,90,42,.10);
+    --sage:#4E7C5C; --sage-soft:rgba(78,124,92,.10);
+    --red:#9B3226; --red-soft:rgba(155,50,38,.08);
+    --border:rgba(24,36,48,.14); --card:#FFFFFE; --card-shadow:0 2px 18px rgba(24,36,48,.07);
+    --radius:12px;
+  }
+  :root:not([data-theme="light"]){
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#12161C; --paper-2:#181D25;
+      --ink:#EAE7DD; --muted:#9AA2AE; --muted-2:#7C8492;
+      --blue-soft:rgba(95,150,200,.14); --terra-soft:rgba(210,120,70,.14); --sage-soft:rgba(120,180,140,.14); --red-soft:rgba(220,120,100,.14);
+      --border:rgba(234,231,221,.14); --card:#1B2028; --card-shadow:0 2px 18px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12161C; --paper-2:#181D25;
+    --ink:#EAE7DD; --muted:#9AA2AE; --muted-2:#7C8492;
+    --blue-soft:rgba(95,150,200,.14); --terra-soft:rgba(210,120,70,.14); --sage-soft:rgba(120,180,140,.14); --red-soft:rgba(220,120,100,.14);
+    --border:rgba(234,231,221,.14); --card:#1B2028; --card-shadow:0 2px 18px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:'Public Sans',sans-serif;font-weight:400;min-height:100vh}
+  ::selection{background:var(--terra-soft)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1rem 1.6rem;border-bottom:1px solid var(--border);background:var(--paper);position:sticky;top:0;z-index:20}
+  .brand{display:flex;align-items:baseline;gap:.55rem}
+  .brand-mark{font-family:'Fraunces',serif;font-weight:600;font-size:1.28rem;letter-spacing:.01em;color:var(--blue)}
+  .brand-sub{font-size:.66rem;color:var(--muted);letter-spacing:.04em}
+  .nav{display:flex;gap:.3rem;background:var(--paper-2);border:1px solid var(--border);border-radius:10px;padding:.25rem}
+  .nav-btn{padding:.5rem 1rem;border:none;border-radius:7px;background:none;color:var(--muted);font-family:'Public Sans',sans-serif;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s}
+  .nav-btn.active{background:var(--blue);color:#fff}
+  .territory{font-size:.66rem;color:var(--muted-2);padding:.4rem .8rem;border:1px solid var(--border);border-radius:20px}
+  .territory b{color:var(--terra);font-weight:600}
+
+  .view{display:none;max-width:1080px;margin:0 auto;padding:2.2rem 1.6rem 4rem}
+  .view.active{display:block}
+  .eyebrow{font-size:.68rem;color:var(--terra);font-weight:600;margin-bottom:.4rem}
+  h1{font-family:'Fraunces',serif;font-weight:500;font-size:1.7rem;color:var(--ink);margin-bottom:.5rem;line-height:1.25}
+  .lede{font-size:.82rem;color:var(--muted);max-width:640px;line-height:1.6;margin-bottom:2rem}
+
+  /* ---- ACCES ---- */
+  .acces-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:1.4rem;align-items:start}
+  @media (max-width:760px){.acces-grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--card-shadow);padding:1.6rem 1.7rem}
+  .modes{display:flex;gap:.35rem;background:var(--paper-2);border:1px solid var(--border);border-radius:10px;padding:.25rem;margin-bottom:1.4rem}
+  .mode-tab{flex:1;padding:.55rem .5rem;border:none;border-radius:7px;background:none;color:var(--muted);font-family:'Public Sans',sans-serif;font-size:.68rem;font-weight:500;letter-spacing:.02em;cursor:pointer;transition:all .15s}
+  .mode-tab.active{background:var(--blue);color:#fff}
+  .pane{display:none}
+  .pane.active{display:block}
+  .field{margin-bottom:1.05rem}
+  .field label{display:block;font-size:.64rem;color:var(--muted);letter-spacing:.03em;margin-bottom:.4rem}
+  .field input{width:100%;background:var(--paper-2);border:1px solid var(--border);color:var(--ink);font-family:'Public Sans',sans-serif;font-size:.85rem;padding:.68rem .85rem;border-radius:9px;outline:none;transition:border-color .15s}
+  .field input:focus{border-color:var(--blue-2)}
+  #cc-code{letter-spacing:.2em;text-align:center;font-size:1rem;font-variant-numeric:tabular-nums}
+  .btn{width:100%;padding:.8rem;border-radius:9px;background:var(--blue);color:#fff;font-family:'Public Sans',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.02em;border:none;cursor:pointer;transition:background .15s}
+  .btn:hover{background:var(--blue-2)}
+  .btn.secondary{background:var(--terra)}
+  .btn.secondary:hover{background:#a24e22}
+  .hint{font-size:.65rem;color:var(--muted-2);margin-top:.9rem;line-height:1.6;text-align:center}
+  .qr-mock{display:flex;align-items:center;gap:1rem;background:var(--paper-2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-top:1.2rem}
+  .qr-box{width:64px;height:64px;flex-shrink:0;border-radius:6px;background:
+    repeating-linear-gradient(90deg, var(--ink) 0 4px, transparent 4px 8px),
+    repeating-linear-gradient(0deg, var(--ink) 0 4px, transparent 4px 8px);
+    background-blend-mode:multiply;opacity:.82}
+  .qr-mock p{font-size:.68rem;color:var(--muted);line-height:1.55}
+  .qr-mock code{font-size:.66rem;color:var(--blue-2)}
+
+  .note-list{list-style:none;display:flex;flex-direction:column;gap:.7rem}
+  .note-list li{font-size:.72rem;color:var(--muted);line-height:1.55;padding-left:1rem;position:relative}
+  .note-list li::before{content:'—';position:absolute;left:0;color:var(--terra)}
+  .note-list b{color:var(--ink);font-weight:600}
+  .flag{display:inline-block;font-size:.6rem;font-weight:600;letter-spacing:.03em;padding:.15rem .5rem;border-radius:5px;margin-left:.3rem;vertical-align:1px;text-transform:none}
+  .flag.open{background:var(--terra-soft);color:var(--terra)}
+  .flag.ok{background:var(--sage-soft);color:var(--sage)}
+  .card-title{font-size:.63rem;color:var(--blue);text-transform:uppercase;letter-spacing:.09em;margin-bottom:1rem;font-weight:600}
+
+  /* ---- DASHBOARD ---- */
+  .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1.6rem}
+  .chip{padding:.42rem .95rem;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--card);font-size:.7rem;cursor:pointer;transition:all .15s;font-weight:500}
+  .chip:hover{border-color:var(--blue-2);color:var(--blue-2)}
+  .chip.active{border-color:var(--blue);color:#fff;background:var(--blue)}
+  .period-sel{margin-left:auto;background:var(--card);border:1px solid var(--border);color:var(--ink);padding:.42rem .75rem;border-radius:8px;font-size:.72rem;font-family:'Public Sans',sans-serif;outline:none}
+
+  .demo-banner{display:flex;align-items:center;gap:.7rem;background:var(--terra);border:1px solid var(--terra);color:#fff;border-radius:9px;padding:.75rem 1.1rem;font-size:.72rem;font-weight:600;margin-bottom:1.6rem;letter-spacing:.01em}
+  .demo-banner b{text-transform:uppercase;letter-spacing:.05em}
+
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.4rem}
+  @media (max-width:700px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.05rem 1.2rem;box-shadow:var(--card-shadow);position:relative;overflow:hidden}
+  .kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--blue))}
+  .kpi-label{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem;font-weight:600}
+  .kpi-val{font-size:1.55rem;font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .kpi-sub{font-size:.62rem;color:var(--muted-2);margin-top:.25rem}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.1rem}
+  @media (max-width:760px){.grid-2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.3rem;box-shadow:var(--card-shadow)}
+  .bar-item{display:flex;align-items:center;gap:.7rem;margin-bottom:.62rem;font-size:.7rem}
+  .bar-label{width:132px;color:var(--muted);text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bar-track{flex:1;height:7px;background:var(--paper-2);border-radius:4px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:4px;background:var(--bar-color,var(--blue-2));transition:width .5s ease}
+  .bar-n{width:34px;color:var(--muted);text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums;font-weight:500}
+
+  .rank-list{list-style:none;counter-reset:rank}
+  .rank-list li{counter-increment:rank;display:flex;align-items:center;gap:.7rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.73rem}
+  .rank-list li:last-child{border-bottom:none}
+  .rank-list li::before{content:counter(rank);width:20px;height:20px;border-radius:5px;background:var(--paper-2);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:600;flex-shrink:0}
+  .rank-name{flex:1;color:var(--ink)}
+  .rank-n{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.68rem}
+
+  .kanon-row{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.9rem}
+  .kanon-badge{font-size:.63rem;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:.4rem .65rem;background:var(--paper-2)}
+  .kanon-badge b{color:var(--blue-2);font-weight:600}
+
+  table.roles{width:100%;border-collapse:collapse;font-size:.72rem}
+  table.roles th{text-align:left;font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:.5rem .4rem;border-bottom:1px solid var(--border)}
+  table.roles td{padding:.55rem .4rem;border-bottom:1px solid var(--border);color:var(--ink);vertical-align:top}
+  table.roles td.role-name{color:var(--blue-2);font-weight:600;white-space:nowrap}
+
+  .footnote{font-size:.64rem;color:var(--muted-2);line-height:1.7;margin-top:1.8rem;padding-top:1.2rem;border-top:1px solid var(--border)}
+
+  /* ---- ADMINISTRATION ---- */
+  .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+  @media (max-width:900px){.admin-grid{grid-template-columns:1fr}}
+  .admin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+  .btn-add{padding:.5rem .9rem;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:.68rem;font-weight:600;cursor:pointer;font-family:'Public Sans',sans-serif}
+  .btn-add:hover{background:var(--blue-2)}
+  table.admin{width:100%;border-collapse:collapse;font-size:.7rem}
+  table.admin th{text-align:left;font-size:.58rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.45rem .35rem;border-bottom:1px solid var(--border)}
+  table.admin td{padding:.5rem .35rem;border-bottom:1px solid var(--border);color:var(--ink);vertical-align:middle}
+  table.admin tr:last-child td{border-bottom:none}
+  .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:.4rem}
+  .status-dot.active{background:var(--sage)}
+  .status-dot.inactive{background:var(--muted-2)}
+  .row-actions{display:flex;gap:.35rem}
+  .icon-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:.25rem .5rem;font-size:.62rem;cursor:pointer;color:var(--muted);font-family:'Public Sans',sans-serif}
+  .icon-btn:hover{border-color:var(--blue-2);color:var(--blue-2)}
+  .icon-btn.danger:hover{border-color:var(--red);color:var(--red)}
+  .admin-form{display:none;margin-top:1rem;padding:.9rem 1rem;background:var(--paper-2);border-radius:9px;border:1px solid var(--border)}
+  .admin-form.open{display:block}
+  .admin-form .field{margin-bottom:.7rem}
+  .cat-pills{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.3rem}
+  .cat-pill{padding:.3rem .65rem;border-radius:20px;border:1px solid var(--border);font-size:.62rem;cursor:pointer;color:var(--muted);background:var(--card)}
+  .cat-pill.active{border-color:var(--blue);color:#fff;background:var(--blue)}
+  .admin-form .actions{display:flex;gap:.5rem;margin-top:.8rem}
+  .btn-ghost{background:none;border:1px solid var(--border);color:var(--muted);padding:.55rem 1rem;border-radius:8px;font-size:.72rem;cursor:pointer;font-family:'Public Sans',sans-serif}
+  .local-note{font-size:.62rem;color:var(--muted-2);line-height:1.6;margin-top:.9rem}
+
+  /* ---- ILLUSTRATION CARTE RECTO/VERSO ---- */
+  .card-visual-wrap{margin-top:1.6rem}
+  .card-visual-grid{display:flex;gap:1.6rem;flex-wrap:wrap;align-items:flex-start}
+  .card-visual-item{flex:1;min-width:280px;max-width:400px}
+  .card-visual-item svg{width:100%;height:auto;display:block;border-radius:16px;box-shadow:var(--card-shadow)}
+  .card-visual-label{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;font-weight:600}
+  #scratch-cover{transition:opacity .45s ease}
+  #scratch-cover.scratched{opacity:0}
+
+  /* ---- RECONNAISSANCE (paliers, non convertibles) ---- */
+  .tier-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.4rem}
+  @media (max-width:800px){.tier-row{grid-template-columns:repeat(2,1fr)}}
+  .tier-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;box-shadow:var(--card-shadow);text-align:center}
+  .tier-card svg{margin-bottom:.5rem}
+  .tier-name{font-family:'Fraunces',serif;font-size:.95rem;color:var(--ink);margin-bottom:.2rem}
+  .tier-threshold{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .tier-count{font-size:1.15rem;font-weight:500;color:var(--sage);margin-top:.5rem;font-variant-numeric:tabular-nums}
+  .tier-count.masked{font-size:.66rem;font-style:italic;font-weight:400;color:var(--muted)}
+  .tier-count-lbl{font-size:.58rem;color:var(--muted-2);text-transform:uppercase;letter-spacing:.05em}
+  .asso-tier-list{list-style:none}
+  .asso-tier-list li{display:flex;align-items:center;gap:.7rem;padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.73rem}
+  .asso-tier-list li:last-child{border-bottom:none}
+  .asso-tier-badge{width:22px;height:22px;flex-shrink:0}
+  .asso-tier-name{flex:1;color:var(--ink)}
+  .asso-tier-n{color:var(--muted);font-size:.66rem;font-variant-numeric:tabular-nums}
+
+  /* ---- MODE PRÉSENTATION (vidéoprojecteur / assemblée) ---- */
+  body.presentation{zoom:1.32}
+  body.presentation .local-note,
+  body.presentation .footnote,
+  body.presentation .internal-panel,
+  body.presentation #nav-admin{display:none !important}
+  .present-toggle{display:flex;align-items:center;gap:.4rem}
+  .icon-toggle{padding:.42rem .7rem;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:.68rem;cursor:pointer;font-family:'Public Sans',sans-serif}
+  .icon-toggle.active{border-color:var(--terra);color:var(--terra);background:var(--terra-soft)}
+  .slide-nav{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:.4rem .6rem;box-shadow:var(--card-shadow);z-index:30}
+  .slide-nav button{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:var(--paper-2);color:var(--muted);cursor:pointer;font-size:.8rem}
+  .slide-nav button:hover{border-color:var(--blue-2);color:var(--blue-2)}
+  .slide-dots{display:flex;align-items:center;gap:.3rem;padding:0 .3rem;font-size:.6rem;color:var(--muted)}
+
+  /* Accueil */
+  .hero{max-width:720px;margin:2.5rem auto 0;text-align:center}
+  .hero-mark{font-family:'Fraunces',serif;font-weight:600;font-size:3.4rem;color:var(--blue);letter-spacing:.01em}
+  .hero-sub{font-size:.95rem;color:var(--muted);margin:.4rem 0 1.8rem;letter-spacing:.03em}
+  .hero-pitch{font-size:1rem;line-height:1.7;color:var(--ink);margin-bottom:1.6rem}
+  .pivot-card{background:var(--blue-soft);border:1px solid rgba(27,62,99,.25);border-radius:12px;padding:1.1rem 1.4rem;font-size:.92rem;line-height:1.65;color:var(--ink);text-align:left;margin-bottom:1.8rem}
+  .pivot-card b{color:var(--blue)}
+  .hero-chips{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+  .hero-chip{padding:.45rem 1rem;border-radius:20px;border:1px solid var(--border);font-size:.72rem;color:var(--muted)}
+  .agenda-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:left;max-width:900px;margin:0 auto}
+  @media (max-width:800px){.agenda-row{grid-template-columns:repeat(2,1fr)}}
+  .agenda-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.9rem 1rem;box-shadow:var(--card-shadow)}
+  .agenda-num{font-family:'Fraunces',serif;font-size:1.1rem;color:var(--terra);margin-bottom:.3rem}
+  .agenda-lbl{font-size:.74rem;color:var(--ink);font-weight:500}
+
+  /* Clôture */
+  .phase-list{list-style:none;max-width:760px;margin:0 auto 2rem}
+  .phase-list li{display:flex;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--border)}
+  .phase-list li:last-child{border-bottom:none}
+  .phase-num{width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;flex-shrink:0}
+  .phase-txt b{color:var(--ink)}
+  .phase-txt{font-size:.82rem;color:var(--muted);line-height:1.55}
+  .closing-note{text-align:center;max-width:600px;margin:0 auto;font-size:.85rem;color:var(--muted);line-height:1.7}
+
+  /* Preuve & horodatage */
+  .proof-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:stretch;margin-bottom:1.6rem}
+  @media (max-width:820px){.proof-flow{grid-template-columns:repeat(2,1fr);gap:1rem}}
+  .proof-step{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1rem;position:relative;box-shadow:var(--card-shadow);margin-right:1.1rem}
+  .proof-step:last-child{margin-right:0}
+  .proof-step::after{content:'→';position:absolute;top:50%;right:-1.05rem;transform:translateY(-50%);color:var(--muted-2);font-size:.9rem}
+  .proof-step:last-child::after{display:none}
+  @media (max-width:820px){.proof-step{margin-right:0}.proof-step::after{display:none}}
+  .proof-num{width:26px;height:26px;border-radius:50%;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;margin-bottom:.6rem}
+  .proof-title{font-size:.78rem;font-weight:600;color:var(--ink);margin-bottom:.35rem}
+  .proof-desc{font-size:.68rem;color:var(--muted);line-height:1.55}
+  .seal-example{background:var(--paper-2);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.1rem;font-family:'Public Sans',sans-serif;font-size:.72rem;color:var(--muted);line-height:1.8}
+  .seal-example .seal-hash{font-variant-numeric:tabular-nums;letter-spacing:.03em;color:var(--blue-2);word-break:break-all}
+
+  /* Intérêts associations */
+  .benef-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.4rem}
+  @media (max-width:760px){.benef-row{grid-template-columns:1fr}}
+  .benef-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.2rem;box-shadow:var(--card-shadow)}
+  .benef-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--sage-soft);color:var(--sage);font-size:.72rem;font-weight:600;margin-bottom:.5rem}
+  .benef-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.35rem}
+  .benef-desc{font-size:.72rem;color:var(--muted);line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-mark">CIVICA</span>
+    <span class="brand-sub">carte d'accès & dashboard territorial</span>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" id="nav-home" onclick="setView('home')">Accueil</button>
+    <button class="nav-btn" id="nav-acces" onclick="setView('acces')">Carte CIVICA</button>
+    <button class="nav-btn" id="nav-asso" onclick="setView('asso')">Associations</button>
+    <button class="nav-btn" id="nav-preuve" onclick="setView('preuve')">Validation &amp; traçabilité</button>
+    <button class="nav-btn" id="nav-dash" onclick="setView('dash')">Dashboard territorial</button>
+    <button class="nav-btn" id="nav-reco" onclick="setView('reco')">Reconnaissance</button>
+    <button class="nav-btn" id="nav-admin" onclick="setView('admin')">Administration</button>
+    <button class="nav-btn" id="nav-end" onclick="setView('end')">Clôture</button>
+  </div>
+  <div class="present-toggle">
+    <button class="icon-toggle" id="btn-present" onclick="togglePresentation()">Mode présentation</button>
+    <button class="icon-toggle" id="btn-fullscreen" onclick="toggleFullscreen()">Plein écran</button>
+    <button class="icon-toggle" id="btn-download" onclick="downloadFile()" style="display:none">Télécharger</button>
+  </div>
+  <div class="territory">Pilote <b>Agde</b> · CAHM</div>
+</div>
+
+<div class="slide-nav" id="slide-nav">
+  <button onclick="stepSlide(-1)" title="Précédent">‹</button>
+  <span class="slide-dots" id="slide-dots"></span>
+  <button onclick="stepSlide(1)" title="Suivant">›</button>
+</div>
+
+<!-- ===================== VUE 0 — ACCUEIL ===================== -->
+<div class="view" id="view-home">
+  <div class="hero">
+    <div class="hero-mark">CIVICA</div>
+    <div class="hero-sub">Civic Intelligent Community Action — registre territorial vérifiable de l'engagement civique</div>
+    <p class="hero-pitch">CIVICA transforme les actions civiques et associatives — bénévolat, engagement associatif,
+      actions locales — en données territoriales vérifiables, tout en préservant l'identité des participants.</p>
+    <div class="pivot-card">CIVICA s'appuie sur Trace &amp; Anchor pour horodater et rendre vérifiable
+      l'enregistrement des actions validées par les acteurs habilités du territoire.</div>
+    <div class="hero-chips">
+      <span class="hero-chip">Pilote Agde · CAHM</span>
+      <span class="hero-chip">Expérimentation territoriale</span>
+      <span class="hero-chip">Associations · citoyens · collectivités</span>
+    </div>
+    <div class="agenda-row">
+      <div class="agenda-item"><div class="agenda-num">01</div><div class="agenda-lbl">Carte CIVICA — participation sans compte nominatif</div></div>
+      <div class="agenda-item"><div class="agenda-num">02</div><div class="agenda-lbl">Association — validation &amp; bénéfices</div></div>
+      <div class="agenda-item"><div class="agenda-num">03</div><div class="agenda-lbl">Preuve &amp; dashboard — horodatage et restitution territoriale</div></div>
+      <div class="agenda-item"><div class="agenda-num">04</div><div class="agenda-lbl">Prochaines étapes — le test proposé</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== VUE 1 — CARTE ===================== -->
+<div class="view" id="view-acces">
+  <div class="eyebrow">Accès</div>
+  <h1>Carte CIVICA — participation sans compte nominatif</h1>
+  <p class="lede">Un identifiant de carte pseudonymisé donne accès au service et à la reconnaissance des actions
+    validées, sans qu'aucune identité civile ne soit requise.</p>
+
+  <div class="acces-grid">
+    <div class="panel">
+      <div class="modes">
+        <button class="mode-tab active" id="tab-email" onclick="setMode('email')">Agent institutionnel</button>
+        <button class="mode-tab" id="tab-code" onclick="setMode('code')">Carte CIVICA</button>
+      </div>
+
+      <div class="pane active" id="pane-email">
+        <div class="field"><label>Email</label><input type="email" placeholder="agent@agde.fr / cahm.fr / gigamed.fr"></div>
+        <div class="field"><label>Mot de passe</label><input type="password" placeholder="••••••••••"></div>
+        <button class="btn" onclick="return false;">Se connecter</button>
+        <p class="hint">Accès nominatif par rôle (commune, CAHM, association référente, DMMF) — voir la table des rôles dans le dashboard.</p>
+      </div>
+
+      <div class="pane" id="pane-code">
+        <div class="field">
+          <label>Identifiant de la carte CIVICA</label>
+          <input type="text" id="cc-code" placeholder="0000 0000 0000" inputmode="numeric" autocomplete="off" maxlength="15" oninput="formatCode(this)">
+        </div>
+        <button class="btn secondary" onclick="return false;">Accéder à mon espace citoyen</button>
+        <div class="qr-mock">
+          <div class="qr-box"></div>
+          <p>QR identique pour tout un lot de cartes (association, quartier, événement) — aucun code individuel n'est encodé dans le QR. <code>civica.agde.fr/carte</code></p>
+        </div>
+        <p class="hint">Aucune identité civile n'est requise pour recevoir une reconnaissance d'action ; la carte n'ouvre aucun accès aux dashboards.</p>
+      </div>
+    </div>
+
+    <div class="panel internal-panel">
+      <div class="card-title">Principes de conception de la carte (note interne)</div>
+      <ul class="note-list">
+        <li><b>Identifiants :</b> code secret (authentifiant), numéro de série (logistique, non arithmétique), marqueur d'association/quartier distributeur — mêmes trois niveaux que beOtop. <span class="flag open">non tranché</span> unicité globale du marqueur</li>
+        <li><b>Confidentialité :</b> aucune correspondance nominative carte / citoyen conservée ; restitution strictement agrégée, jamais par carte individuelle.</li>
+        <li><b>Révocation :</b> une ligne peut être révoquée sans connaître le porteur. <span class="flag open">non tranché</span> repérage de la carte physique correspondante</li>
+        <li><b>Forfait :</b> pas de logique de forfait payant côté citoyen — la carte CIVICA est gratuite pour les bénéficiaires (associations et bénévoles), à la différence du forfait annuel facturé côté beOtop.</li>
+        <li><b>Accès admin :</b> pas de code maître partagé à 12 chiffres — accès nominatif par rôle dès la conception (commune, CAHM, association, DMMF).</li>
+        <li><b>Périmètre :</b> beOtop et DMMF restent deux entités distinctes ; ce panneau documente une adaptation architecturale, pas un partage de données entre les deux.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="footnote">Note interne masquée en mode présentation — la carte CIVICA est une implémentation propre à
+    DMMF ; sa conception s'inspire de la carte d'accès beOtop sans partager de données ni de plateforme entre les
+    deux entités.</p>
+
+  <div class="card-visual-wrap">
+    <div class="card-title">Illustration — carte CIVICA</div>
+    <div class="card-visual-grid">
+
+      <div class="card-visual-item">
+        <div class="card-visual-label">Recto</div>
+        <svg viewBox="0 0 336 212" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="civ-front-bg" x1="0" y1="0" x2="336" y2="212" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#1B3E63"/>
+              <stop offset="1" stop-color="#123049"/>
+            </linearGradient>
+          </defs>
+          <rect width="336" height="212" rx="16" fill="url(#civ-front-bg)"/>
+          <rect x="0" y="0" width="336" height="6" rx="3" fill="#B85A2A"/>
+          <!-- pictogramme colonnes (bâtiment civique) -->
+          <g transform="translate(24,26)" fill="#E7D9C4" opacity=".9">
+            <rect x="0" y="10" width="26" height="3" rx="1"/>
+            <rect x="2" y="14" width="3" height="12"/>
+            <rect x="8" y="14" width="3" height="12"/>
+            <rect x="14" y="14" width="3" height="12"/>
+            <rect x="20" y="14" width="3" height="12"/>
+            <rect x="0" y="27" width="26" height="3" rx="1"/>
+          </g>
+          <text x="60" y="40" font-family="Fraunces,serif" font-size="22" font-weight="600" fill="#F5F2E9">CIVICA</text>
+          <text x="24" y="60" font-family="Public Sans,sans-serif" font-size="9" letter-spacing=".04em" fill="#B9C6D4">CARTE D'ENGAGEMENT CITOYEN</text>
+
+          <!-- QR mock -->
+          <g transform="translate(24,120)">
+            <rect width="52" height="52" rx="4" fill="#F5F2E9"/>
+            <g fill="#123049">
+              <rect x="6" y="6" width="12" height="12"/><rect x="34" y="6" width="12" height="12"/>
+              <rect x="6" y="34" width="12" height="12"/>
+              <rect x="22" y="6" width="4" height="4"/><rect x="22" y="14" width="4" height="4"/>
+              <rect x="22" y="22" width="4" height="4"/><rect x="14" y="22" width="4" height="4"/>
+              <rect x="30" y="22" width="4" height="4"/><rect x="30" y="30" width="4" height="4"/>
+              <rect x="38" y="30" width="4" height="4"/><rect x="22" y="30" width="4" height="4"/>
+              <rect x="22" y="38" width="4" height="4"/><rect x="30" y="38" width="4" height="4"/>
+              <rect x="38" y="38" width="4" height="4"/>
+            </g>
+          </g>
+
+          <!-- marqueur distributeur -->
+          <g transform="translate(210,150)">
+            <rect width="102" height="24" rx="12" fill="rgba(245,242,233,.12)" stroke="#4A6E8C"/>
+            <text x="51" y="16" font-family="Public Sans,sans-serif" font-size="9" font-weight="600" letter-spacing=".05em" fill="#E7D9C4" text-anchor="middle">AGDE · CAHM</text>
+          </g>
+          <text x="312" y="196" font-family="Public Sans,sans-serif" font-size="8" fill="#6E8298" text-anchor="end">civica.agde.fr/carte</text>
+        </svg>
+      </div>
+
+      <div class="card-visual-item">
+        <div class="card-visual-label">Verso</div>
+        <svg viewBox="0 0 336 212" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="civ-scratch-tex" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+              <rect width="6" height="6" fill="#C9C3B2"/>
+              <line x1="0" y1="0" x2="0" y2="6" stroke="#AEA890" stroke-width="2"/>
+            </pattern>
+          </defs>
+          <rect width="336" height="212" rx="16" fill="#F5F2E9" stroke="#D9D2C0" stroke-width="1"/>
+          <rect x="0" y="18" width="336" height="30" fill="#182430"/>
+
+          <text x="24" y="76" font-family="Public Sans,sans-serif" font-size="8" letter-spacing=".07em" fill="#5B6472">IDENTIFIANT DE LA CARTE</text>
+          <g font-family="Public Sans,sans-serif" font-size="15" letter-spacing=".18em" fill="#182430" font-variant-numeric="tabular-nums">
+            <rect x="24" y="86" width="66" height="26" rx="6" fill="#EDE8DA"/>
+            <text x="57" y="103" text-anchor="middle">0000</text>
+            <rect x="98" y="86" width="66" height="26" rx="6" fill="#EDE8DA"/>
+            <text x="131" y="103" text-anchor="middle">0000</text>
+            <rect x="172" y="86" width="66" height="26" rx="6" fill="#EDE8DA"/>
+            <text x="205" y="103" text-anchor="middle">0000</text>
+          </g>
+
+          <!-- zone à gratter : recouvre le bloc identifiant ci-dessus -->
+          <g id="scratch-cover" onclick="toggleScratch()" style="cursor:pointer">
+            <rect x="21" y="83" width="221" height="32" rx="7" fill="url(#civ-scratch-tex)" stroke="#9C9580"/>
+            <circle cx="38" cy="99" r="7" fill="#EDE8DA" stroke="#9C9580" stroke-width="1"/>
+            <path d="M34.5 99a3.5 3.5 0 1 0 7 0" fill="none" stroke="#9C9580" stroke-width="1"/>
+            <text x="52" y="96.5" font-family="Public Sans,sans-serif" font-size="7" font-weight="600" letter-spacing=".03em" fill="#5F5A47">GRATTER POUR</text>
+            <text x="52" y="105.5" font-family="Public Sans,sans-serif" font-size="7" font-weight="600" letter-spacing=".03em" fill="#5F5A47">DÉCOUVRIR VOTRE CODE</text>
+          </g>
+
+          <text x="24" y="140" font-family="Public Sans,sans-serif" font-size="7.5" fill="#7A8290">N° de série (logistique, non arithmétique) — 000482</text>
+          <text x="24" y="153" font-family="Public Sans,sans-serif" font-size="7.5" fill="#7A8290">Aucune donnée nominative n'est associée à cet identifiant.</text>
+          <text x="24" y="166" font-family="Public Sans,sans-serif" font-size="7.5" fill="#7A8290">Cette carte n'ouvre aucun accès aux dashboards.</text>
+
+          <rect x="24" y="182" width="120" height="14" rx="7" fill="none" stroke="#D9D2C0"/>
+          <text x="30" y="192" font-family="Public Sans,sans-serif" font-size="7" fill="#7A8290">civica.agde.fr · DMMF</text>
+          <text x="312" y="192" font-family="Public Sans,sans-serif" font-size="7" fill="#B85A2A" text-anchor="end">points CIVICA · reconnaissance</text>
+        </svg>
+        <p class="local-note">Zone grisée cliquable — simule le grattage révélant l'identifiant (démonstration, se recouvre au reclic).</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-preuve">
+  <div class="eyebrow">Certification</div>
+  <h1>Validation, horodatage &amp; traçabilité</h1>
+  <p class="lede">CIVICA s'appuie sur Trace &amp; Anchor pour horodater et rendre vérifiable l'enregistrement des
+    actions validées par les acteurs habilités du territoire.</p>
+
+  <div class="proof-flow">
+    <div class="proof-step">
+      <div class="proof-num">1</div>
+      <div class="proof-title">Action validée</div>
+      <div class="proof-desc">L'association référente valide l'action dans son périmètre d'habilitation (voir Administration).</div>
+    </div>
+    <div class="proof-step">
+      <div class="proof-num">2</div>
+      <div class="proof-title">Enregistrement daté</div>
+      <div class="proof-desc">Date et heure de l'action enregistrées, données pseudonymisées — sans lien avec l'identité civile du porteur.</div>
+    </div>
+    <div class="proof-step">
+      <div class="proof-num">3</div>
+      <div class="proof-title">Journal quotidien</div>
+      <div class="proof-desc">Les actions de la journée sont consolidées dans un journal quotidien des validations.</div>
+    </div>
+    <div class="proof-step">
+      <div class="proof-num">4</div>
+      <div class="proof-title">Scellé Trace &amp; Anchor</div>
+      <div class="proof-desc">Le journal du jour est scellé et ancré — vérifiable, sans dépendre d'un tiers de confiance unique.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.1rem">
+    <div class="card-title">Horodatage qualifié eIDAS intégré à Trace &amp; Anchor</div>
+    <p style="font-size:.78rem;color:var(--ink);line-height:1.65;margin-bottom:.6rem">Trace &amp; Anchor peut intégrer
+      un horodatage électronique <b>qualifié eIDAS</b> fourni par <b>Datasure</b> — prestataire de services de
+      confiance qualifié (PSCO), liste de confiance européenne (EUTL), basé à Pézenas (Hérault). C'est Datasure qui
+      détient la qualification eIDAS ; Trace &amp; Anchor l'intègre dans les certificats qu'il délivre. Certificat de
+      référence intégrant ce niveau : <b>TA-2026-3ae5b65e</b>.</p>
+    <p class="footnote" style="margin-top:0;border-top:none;padding-top:0">Datasure — datasure.net. Visé de sécurité
+      ANSSI : mention technique à vérifier contre le justificatif exact avant toute diffusion externe l'affirmant
+      explicitement.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1.1rem">
+    <div class="card-title">Structure d'un certificat Trace &amp; Anchor (exemple réel, document) <span class="flag ok">certificat réel</span></div>
+    <table class="roles">
+      <tr><th>Niveau</th><th>Portée juridique</th></tr>
+      <tr><td class="role-name">1 — Ancrage blockchain</td><td>Empreinte du document inscrite sur la blockchain publique Solana. Élément de preuve recevable (preuve libre, art. 1358 Code civil).</td></tr>
+      <tr><td class="role-name">2 — Horodatage qualifié eIDAS</td><td>Datasure, ETSI EN 319 422. Présomption d'exactitude de la date et de l'heure indiquées et d'intégrité des données auxquelles elles sont liées (art. 41§2, règlement UE 910/2014).</td></tr>
+      <tr><td class="role-name">3 — Identification FranceConnect</td><td>Authentification du déposant via FranceConnect (DINUM). Ne vaut ni signature électronique ni certification d'identité — décrit le processus technique mis en œuvre.</td></tr>
+      <tr><td class="role-name">5 — Constat commissaire de justice</td><td>Optionnel. Procès-verbal établi par un officier public et ministériel — fait foi jusqu'à preuve contraire.</td></tr>
+    </table>
+    <p class="footnote" style="margin-top:.9rem;border-top:none;padding-top:0">Ce niveau de rigueur concerne le
+      produit de certification de document Trace &amp; Anchor (ancrage individuel, immédiat, par fichier) — c'est
+      celui déjà utilisé en interne par DMMF, y compris pour certifier ses propres spécifications. Il est distinct du
+      mécanisme envisagé pour les actions citoyennes ci-dessous, pensé pour un tout autre volume.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Exemple de scellé — actions citoyennes (illustratif) <span class="flag open">non contractualisé</span></div>
+      <div class="seal-example">
+        Journal du 18/09/2026 — Agde, Vias, Marseillan, Bessan, Florensac<br>
+        Actions consolidées : 47<br>
+        Empreinte du jour : <span class="seal-hash">4f9a2e…c81b</span><br>
+        Statut : ancré &amp; vérifiable
+      </div>
+      <p class="footnote" style="margin-top:.9rem;border-top:none;padding-top:0">Donnée d'exemple, non contractualisée
+        à ce jour — un scellé porterait sur l'ensemble des actions du jour, jamais sur une action isolée : c'est le
+        journal qui serait vérifiable, pas une preuve individuelle consultable action par action. À la différence du
+        certificat de document ci-dessus (ancrage immédiat par fichier), le volume d'actions citoyennes appelle une
+        consolidation quotidienne plutôt qu'un ancrage unitaire.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Ce que l'horodatage des actions ne fera pas</div>
+      <ul class="note-list">
+        <li><b>Pas d'ancrage action par action :</b> scellés quotidiens consolidés envisagés, pas un ancrage unitaire par action.</li>
+        <li><b>Pas de preuve nominative :</b> l'horodatage porterait sur l'action pseudonymisée, jamais sur l'identité du porteur de carte.</li>
+        <li><b>Pas de preuve de la réalité matérielle :</b> l'horodatage atteste qu'une validation d'action a été
+          enregistrée à une date donnée ; il ne démontre pas, à lui seul, que l'action s'est physiquement produite.</li>
+        <li><b>Pas de solde ni de valeur :</b> cette attestation n'ouvre aucun droit, aucune contrepartie (voir Reconnaissance).</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="footnote">Trace &amp; Anchor est une brique technique interne à DMMF, jamais présentée comme un
+    partenaire externe. Le détail du mécanisme blockchain sous-jacent n'est pas développé ici — cette diapo reste au
+    niveau de formulation validé pour un public d'élus ; un niveau technique plus poussé est réservé aux contextes de
+    financement innovation (BPI, France 2030).</p>
+</div>
+
+<!-- ===================== VUE 2 — DASHBOARD ===================== -->
+<div class="view" id="view-dash">
+  <div class="eyebrow">Restitution territoriale</div>
+  <h1>Dashboard CIVICA — actions citoyennes reconnues</h1>
+  <p class="lede">Restitution agrégée par commune, catégorie d'action et période. Aucune reconnaissance individuelle,
+    aucun solde de points, aucun taux de conversion affiché — conforme à l'architecture retenue (option A).</p>
+
+  <div class="demo-banner"><b>Simulation — données fictives.</b> À connecter aux données réelles du pilote.</div>
+
+  <div class="filter-bar" id="commune-bar"></div>
+
+  <div class="kpi-row">
+    <div class="kpi" style="--accent:var(--blue)"><div class="kpi-label">Actions reconnues (mois)</div><div class="kpi-val" id="kpi-actions">—</div><div class="kpi-sub">toutes communes pilotes</div></div>
+    <div class="kpi" style="--accent:var(--terra)"><div class="kpi-label">Porteurs de carte actifs</div><div class="kpi-val" id="kpi-citoyens">—</div><div class="kpi-sub">≥ 1 action sur la période</div></div>
+    <div class="kpi" style="--accent:var(--sage)"><div class="kpi-label">Associations partenaires</div><div class="kpi-val" id="kpi-assos">—</div><div class="kpi-sub">structures relais actives</div></div>
+    <div class="kpi" style="--accent:var(--blue-2)"><div class="kpi-label">Communes engagées</div><div class="kpi-val" id="kpi-communes">—</div><div class="kpi-sub">sur le périmètre CAHM</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Répartition par catégorie d'action</div>
+      <div id="bar-categories"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Répartition par commune</div>
+      <div id="bar-communes"></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Top associations relais</div>
+      <ul class="rank-list" id="rank-assos"></ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Top catégories reconnues</div>
+      <ul class="rank-list" id="rank-categories"></ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.1rem">
+    <div class="card-title">Confidentialité — seuils de restitution du démonstrateur</div>
+    <div class="kanon-row">
+      <div class="kanon-badge">Comptages capteurs / bornes <b>k ≥ 5</b></div>
+      <div class="kanon-badge">Événements / sessions carte <b>k ≥ 15</b></div>
+      <div class="kanon-badge">Proportions affichées <b>k ≥ 10</b></div>
+    </div>
+    <p class="footnote" style="margin-top:.9rem;border-top:none;padding-top:0">Toute répartition croisant une dimension fine (petite commune, petite association, catégorie rare)
+      passe par ce filtre avant restitution ; en-dessous du seuil, la valeur est masquée plutôt qu'arrondie.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Rôles &amp; portée d'accès</div>
+    <table class="roles">
+      <tr><th>Rôle</th><th>Portée</th></tr>
+      <tr><td class="role-name">Citoyen (carte)</td><td>accès à son parcours d'actions uniquement ; aucun accès dashboard</td></tr>
+      <tr><td class="role-name">Association relais</td><td>saisie/validation des actions de sa structure ; statistiques agrégées de sa structure</td></tr>
+      <tr><td class="role-name">Agent commune</td><td>statistiques agrégées de sa commune uniquement</td></tr>
+      <tr><td class="role-name">Agent CAHM</td><td>statistiques agrégées de l'ensemble des communes pilotes</td></tr>
+      <tr><td class="role-name">Admin DMMF</td><td>accès nominatif, périmètre technique complet — pas de code maître partagé</td></tr>
+    </table>
+  </div>
+
+  <p class="footnote">Vocabulaire externe : « points CIVICA » uniquement, décrits comme unités de reconnaissance non
+    monétaires, non convertibles, non transférables. Aucune mention de MLRCOIN / MLRCOIN-O / MLRPOINTS dans cette
+    vue. Le marqueur d'association distributeur et la révocation individuelle restent des points ouverts de la
+    conception de la carte, non tranchés pour CIVICA.</p>
+</div>
+
+<!-- ===================== VUE 3 — ADMINISTRATION ===================== -->
+<div class="view" id="view-admin">
+  <div class="eyebrow">Référentiel</div>
+  <h1>Communes &amp; associations</h1>
+  <p class="lede">Ce référentiel alimente le filtre du dashboard et porte le marqueur distributeur de la carte CIVICA
+    (association ou commune de rattachement). Saisie de démonstration — stockée dans ce navigateur uniquement ;
+    le référentiel de production doit vivre côté serveur DMMF.</p>
+
+  <div class="admin-grid">
+    <div class="card">
+      <div class="admin-head">
+        <div class="card-title" style="margin-bottom:0">Communes</div>
+        <button class="btn-add" onclick="toggleForm('commune')">+ Nouvelle commune</button>
+      </div>
+      <table class="admin">
+        <tr><th>Commune</th><th>Slug</th><th>Périmètre</th><th>Référent agent</th><th></th></tr>
+        <tbody id="tbl-communes"></tbody>
+      </table>
+      <div class="admin-form" id="form-commune">
+        <div class="field"><label>Nom de la commune</label><input type="text" id="c-nom" placeholder="Bessan"></div>
+        <div class="field"><label>Slug</label><input type="text" id="c-slug" placeholder="bessan"></div>
+        <div class="field"><label>Périmètre</label><input type="text" id="c-perimetre" placeholder="Pilote CAHM"></div>
+        <div class="field"><label>Référent agent (login nominatif)</label><input type="text" id="c-referent" placeholder="prenom.nom@commune.fr"></div>
+        <div class="actions">
+          <button class="btn" style="width:auto;padding:.55rem 1.1rem" onclick="saveCommune()">Enregistrer</button>
+          <button class="btn-ghost" onclick="toggleForm('commune')">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="admin-head">
+        <div class="card-title" style="margin-bottom:0">Associations</div>
+        <button class="btn-add" onclick="toggleForm('asso')">+ Nouvelle association</button>
+      </div>
+      <table class="admin">
+        <tr><th>Association</th><th>Commune</th><th>Périmètres</th><th>Statut</th><th>Référent</th><th></th></tr>
+        <tbody id="tbl-assos"></tbody>
+      </table>
+      <div class="admin-form" id="form-asso">
+        <div class="field"><label>Nom de l'association</label><input type="text" id="a-nom" placeholder="Voisins Solidaires Agde"></div>
+        <div class="field"><label>Commune de rattachement</label>
+          <select id="a-commune" style="width:100%;background:var(--paper-2);border:1px solid var(--border);color:var(--ink);padding:.65rem .8rem;border-radius:9px;font-family:'Public Sans',sans-serif;font-size:.8rem"></select>
+        </div>
+        <div class="field"><label>Référent association (login nominatif)</label><input type="text" id="a-referent" placeholder="contact@association.fr"></div>
+        <div class="field"><label>Périmètres d'action (catégories habilitées)</label>
+          <div class="cat-pills" id="a-cats"></div>
+          <p class="local-note" style="margin-top:.4rem">Au moins un périmètre requis : l'association ne pourra valider des actions que dans les catégories cochées.</p>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" style="width:auto;padding:.55rem 1.1rem" onclick="saveAsso()">Enregistrer</button>
+          <button class="btn-ghost" onclick="toggleForm('asso')">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.1rem">
+    <div class="admin-head">
+      <div class="card-title" style="margin-bottom:0">Comptes &amp; niveaux d'accès</div>
+      <button class="btn-add" onclick="toggleForm('compte')">+ Nouveau compte</button>
+    </div>
+    <table class="admin">
+      <tr><th>Nom</th><th>Identifiant</th><th>Rôle</th><th>Périmètre</th><th>Accès</th><th>Statut</th><th></th></tr>
+      <tbody id="tbl-comptes"></tbody>
+    </table>
+    <div class="admin-form" id="form-compte">
+      <div class="field"><label>Nom</label><input type="text" id="u-nom" placeholder="Prénom Nom"></div>
+      <div class="field"><label>Identifiant (login nominatif)</label><input type="text" id="u-email" placeholder="prenom.nom@agde.fr"></div>
+      <div class="field"><label>Rôle</label>
+        <select id="u-role" onchange="onRoleChange()" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--ink);padding:.65rem .8rem;border-radius:9px;font-family:'Public Sans',sans-serif;font-size:.8rem">
+          <option value="admin">Admin DMMF</option>
+          <option value="cahm">Agent CAHM</option>
+          <option value="commune">Agent commune</option>
+          <option value="association">Association relais</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Périmètre</label>
+        <select id="u-perimetre" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--ink);padding:.65rem .8rem;border-radius:9px;font-family:'Public Sans',sans-serif;font-size:.8rem"></select>
+      </div>
+      <div class="field"><label>Type d'accès</label>
+        <select id="u-acces" style="width:100%;background:var(--card);border:1px solid var(--border);color:var(--ink);padding:.65rem .8rem;border-radius:9px;font-family:'Public Sans',sans-serif;font-size:.8rem">
+          <option value="consultation">Consultation (lecture seule)</option>
+          <option value="ecriture">Lecture / écriture</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="btn" style="width:auto;padding:.55rem 1.1rem" onclick="saveCompte()">Enregistrer</button>
+        <button class="btn-ghost" onclick="toggleForm('compte')">Annuler</button>
+      </div>
+    </div>
+    <p class="local-note">Accès nominatif par rôle — aucun code maître partagé, conformément au point tranché sur
+      l'admin plateforme. Le périmètre « Agent commune » ou « Association relais » limite la restitution à l'entité
+      choisie ; « Agent CAHM » couvre l'ensemble des communes pilotes ; « Admin DMMF » a accès complet.</p>
+  </div>
+
+</div>
+
+<!-- ===================== VUE 4 — RECONNAISSANCE ===================== -->
+<div class="view" id="view-reco">
+  <div class="eyebrow">Engagement</div>
+  <h1>Paliers de reconnaissance</h1>
+  <p class="lede">Les paliers concernent les porteurs de carte, pas les associations : une association affichant 60
+    actions et une personne affichant 60 actions ne représentent pas la même chose. Les associations disposent
+    d'indicateurs d'activité ; les paliers qualifient un niveau d'engagement individuel — ni solde, ni monnaie, ni
+    droit à contrepartie.</p>
+
+  <div class="demo-banner"><b>Simulation — données fictives.</b> Aucun catalogue de contreparties, aucune conversion,
+    aucun échange entre porteurs. Un palier se constate, il ne se dépense pas — conforme à l'architecture retenue (option A).</div>
+
+  <div class="tier-row" id="tier-row"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Indicateurs d'activité par association</div>
+      <ul class="rank-list" id="asso-tier-list"></ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Répartition des cartes par palier</div>
+      <div id="bar-cartes-palier"></div>
+      <p class="footnote" style="margin-top:.9rem;border-top:none;padding-top:0">Répartition agrégée uniquement —
+        aucune consultation du palier d'une carte individuelle, aucun historique d'utilisations successives.
+        Seuil k-anonymat repris de la section Dashboard territorial (k ≥ 15 sur les événements/sessions carte).</p>
+    </div>
+  </div>
+
+  <p class="footnote">Vocabulaire : « palier de reconnaissance » et « badge », jamais « récompense » ni
+    « redistribution ». Un palier n'est ni convertible, ni échangeable, ni transférable entre porteurs de carte —
+    il documente un niveau d'engagement individuel constaté, à la manière d'une attestation.</p>
+</div>
+
+<!-- ===================== VUE — INTÉRÊTS ASSOCIATIONS ===================== -->
+<div class="view" id="view-asso">
+  <div class="eyebrow">Pourquoi rejoindre</div>
+  <h1>Ce que CIVICA apporte à une association</h1>
+  <p class="lede">Aucune contrepartie financière — l'intérêt est administratif et réputationnel, pas économique.
+    Cinq registres concrets, du plus immédiat au plus stratégique.</p>
+
+  <div class="benef-row">
+    <div class="benef-card">
+      <div class="benef-num">1</div>
+      <div class="benef-title">Traçabilité de l'activité pour les dossiers de subvention</div>
+      <div class="benef-desc">Un historique d'actions validées, datées et vérifiables pouvant documenter un dossier
+        de subvention mairie/CAHM — sans garantie d'acceptation, mais plus solide qu'un compte-rendu déclaratif.</div>
+    </div>
+    <div class="benef-card">
+      <div class="benef-num">2</div>
+      <div class="benef-title">Un outil de suivi sans coût pendant le pilote</div>
+      <div class="benef-desc">Beaucoup de petites associations n'ont aucun logiciel de suivi de leurs bénévoles.
+        Carte CIVICA + dashboard, sans coût pour l'association pendant l'expérimentation.</div>
+    </div>
+    <div class="benef-card">
+      <div class="benef-num">3</div>
+      <div class="benef-title">Visibilité et reconnaissance publique</div>
+      <div class="benef-desc">Des indicateurs d'activité, visibles par les communes et la CAHM, peuvent contribuer
+        à objectiver l'activité de l'association auprès de ses partenaires institutionnels.</div>
+    </div>
+    <div class="benef-card">
+      <div class="benef-num">4</div>
+      <div class="benef-title">Accès simplifié aux bénévoles occasionnels</div>
+      <div class="benef-desc">La carte non nominative limite la collecte de données personnelles pour les
+        participations ponctuelles — moins de friction administrative et RGPD.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.1rem">
+    <div class="card-title">5 — Position d'association pilote</div>
+    <p style="font-size:.78rem;color:var(--ink);line-height:1.65">Des réseaux associatifs locaux de proximité, tels
+      que L'Heure Civique (réseau Voisins Solidaires, 180+ communes), constituent des candidats naturels pour une
+      première expérimentation — sous réserve de leur accord. Être association pilote permet de participer à la
+      conception et à l'évaluation du dispositif dès sa première phase.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ce que ce n'est pas</div>
+    <ul class="note-list">
+      <li><b>Pas de contrepartie financière ni matérielle :</b> l'intérêt est administratif et réputationnel.</li>
+      <li><b>Pas un gain à effort zéro :</b> ça demande un référent qui valide effectivement les actions.</li>
+      <li><b>Pas une garantie de continuation :</b> le pilote (phase 1) n'assure rien au-delà — s'engager, c'est parier sur la suite du projet.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== VUE 5 — CLÔTURE ===================== -->
+<div class="view" id="view-end">
+  <div class="hero">
+    <div class="eyebrow">Prochaines étapes</div>
+    <h1 style="text-align:center">Le test proposé</h1>
+    <div class="card" style="max-width:640px;margin:0 auto 1.4rem;text-align:left">
+      <ul class="note-list">
+        <li><b>2 à 3 associations</b> d'Agde</li>
+        <li><b>100 à 300 cartes</b> distribuées</li>
+        <li><b>3 catégories d'actions</b> retenues</li>
+        <li><b>3 mois</b> d'expérimentation</li>
+        <li><b>1 dashboard territorial</b> de restitution</li>
+      </ul>
+      <p style="font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:1.1rem;margin-bottom:.5rem">5 indicateurs d'évaluation</p>
+      <ul class="note-list">
+        <li>Taux d'activation des cartes distribuées</li>
+        <li>Nombre d'actions validées</li>
+        <li>Taux de réutilisation à 30 et 60 jours</li>
+        <li>Nombre de bénévoles occasionnels mobilisés</li>
+        <li>Satisfaction associations &amp; collectivité</li>
+      </ul>
+      <p style="font-size:.76rem;color:var(--muted);line-height:1.6;margin-top:.9rem">Objectif : déterminer si
+        CIVICA produit suffisamment d'usage et de données utiles pour justifier un Living Lab à plus grande
+        échelle.</p>
+    </div>
+    <p style="max-width:640px;margin:0 auto 1.6rem;font-size:.64rem;color:var(--muted-2);line-height:1.7;text-align:center">Vision à plus long terme, hors périmètre de ce
+      test — étape suivante possible : Living Lab territorial sur 24 mois, puis, sous réserve de portage parlementaire,
+      cadre de l'article 37-1 de la Constitution pour une expérimentation nationale.</p>
+    <p class="closing-note">CIVICA — Delta Multimedia France (DMMF), en lien avec la Communauté d'Agglomération
+      Hérault Méditerranée. Présentation à visée pédagogique — chiffres illustratifs.</p>
+  </div>
+</div>
+
+<script>
+  var SLIDES = ['home','acces','asso','preuve','dash','reco','admin','end'];
+  function visibleSlides(){
+    return document.body.classList.contains('presentation') ? SLIDES.filter(function(s){ return s!=='admin'; }) : SLIDES;
+  }
+  function setView(v){
+    SLIDES.forEach(function(s){
+      var view = document.getElementById('view-'+s);
+      var nav = document.getElementById('nav-'+s);
+      if(view) view.classList.toggle('active', v===s);
+      if(nav) nav.classList.toggle('active', v===s);
+    });
+    if(v==='admin'){ renderAdminCommunes(); renderAdminAssos(); renderAdminComptes(); }
+    if(v==='reco'){ renderReco(); }
+    renderSlideDots(v);
+  }
+
+  function renderSlideDots(current){
+    var box = document.getElementById('slide-dots');
+    var list = visibleSlides();
+    box.innerHTML = list.map(function(s){
+      return '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;margin:0 2px;background:'+
+        (s===current?'var(--blue)':'var(--border)')+'"></span>';
+    }).join('');
+  }
+  function stepSlide(dir){
+    var list = visibleSlides();
+    var current = list.filter(function(s){ return document.getElementById('view-'+s).classList.contains('active'); })[0] || 'home';
+    var idx = list.indexOf(current);
+    if(idx === -1) idx = 0;
+    idx += dir;
+    if(idx < 0) idx = 0;
+    if(idx >= list.length) idx = list.length - 1;
+    setView(list[idx]);
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight') stepSlide(1);
+    if(e.key === 'ArrowLeft') stepSlide(-1);
+  });
+
+  function togglePresentation(){
+    var on = document.body.classList.toggle('presentation');
+    document.getElementById('btn-present').classList.toggle('active', on);
+    document.getElementById('btn-present').textContent = on ? 'Quitter la présentation' : 'Mode présentation';
+  }
+  function toggleFullscreen(){
+    try{
+      if(!document.fullscreenElement){ document.documentElement.requestFullscreen(); }
+      else{ document.exitFullscreen(); }
+    }catch(e){ /* API plein écran indisponible dans cet environnement : le mode présentation reste utilisable sans elle */ }
+  }
+
+  // ---- Téléchargement du fichier (capacité "downloads" du viewer d'artefacts) ----
+  var downloadsCap = null;
+  (async function initDownload(){
+    try{
+      if(!window.claude || !window.claude.use) throw new Error('runtime indisponible');
+      downloadsCap = await window.claude.use('downloads');
+    }catch(e){ downloadsCap = null; }
+    var b = document.getElementById('btn-download');
+    if(b) b.style.display = downloadsCap ? '' : 'none';
+  })();
+  function downloadFile(){
+    if(!downloadsCap) return;
+    var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    downloadsCap.save({ filename: 'civica_carte_dashboard.html', data: html }).catch(function(err){
+      if(err && err.code === 'declined') return;
+      console.warn('Téléchargement impossible :', err && err.message);
+    });
+  }
+  function setMode(m){
+    document.getElementById('tab-email').classList.toggle('active', m==='email');
+    document.getElementById('tab-code').classList.toggle('active', m==='code');
+    document.getElementById('pane-email').classList.toggle('active', m==='email');
+    document.getElementById('pane-code').classList.toggle('active', m==='code');
+  }
+  function formatCode(el){
+    var d = el.value.replace(/\D/g,'').slice(0,12);
+    el.value = (d.match(/.{1,4}/g)||[]).join(' ');
+  }
+
+  // ---- Données illustratives (à remplacer par l'API réelle) ----
+  var COMMUNES = ['Agde','Vias','Marseillan','Bessan','Florensac'];
+  var DATA = {
+    Agde:      {actions:412, citoyens:186, assos:9,  communes:1, cats:[['Solidarité',148],['Environnement',96],['Culture',72],['Sport',58],['Entraide seniors',38]], assosTop:[['Voisins Solidaires Agde',96],['Secours Populaire',74],['Amis du littoral',52],['Croix-Rouge locale',41],['Club seniors',33]]},
+    Vias:      {actions:158, citoyens:74,  assos:5,  communes:1, cats:[['Environnement',61],['Solidarité',44],['Sport',28],['Culture',15],['Entraide seniors',10]], assosTop:[['Vias Nature',52],['Secours Populaire',37],['Club rando',29],['Vias Solidaire',24],['Amicale locale',16]]},
+    Marseillan:{actions:121, citoyens:58,  assos:4,  communes:1, cats:[['Culture',40],['Solidarité',33],['Environnement',27],['Sport',14],['Entraide seniors',7]], assosTop:[['Marseillan Culture',31],['Étang propre',28],['Solidarité Thau',24],['Club nautique',20],['Amicale seniors',18]]},
+    Bessan:    {actions:96,  citoyens:41,  assos:3,  communes:1, cats:[['Solidarité',31],['Environnement',25],['Culture',19],['Sport',13],['Entraide seniors',8]], assosTop:[['Bessan Entraide',26],['Amis de Bessan',22],['Club jardins',19],['Amicale locale',16],['Secours Populaire',13]]},
+    Florensac: {actions:64,  citoyens:29,  assos:3,  communes:1, cats:[['Environnement',22],['Solidarité',18],['Culture',12],['Sport',8],['Entraide seniors',4]], assosTop:[['Florensac Vert',18],['Solidarité village',16],['Club seniors',14],['Amicale sportive',9],['Bénévoles fête locale',7]]}
+  };
+  var BAR_COLORS = ['var(--blue)','var(--terra)','var(--sage)','var(--blue-2)','#8a7550'];
+  var currentCommune = 'ALL';
+
+  function aggAll(){
+    var out = {actions:0, citoyens:0, assos:0, communes:COMMUNES.length, cats:{}, assosTop:{}};
+    COMMUNES.forEach(function(c){
+      var d = DATA[c];
+      out.actions += d.actions; out.citoyens += d.citoyens; out.assos += d.assos;
+      d.cats.forEach(function(p){ out.cats[p[0]] = (out.cats[p[0]]||0) + p[1]; });
+      d.assosTop.forEach(function(p){ out.assosTop[p[0]] = (out.assosTop[p[0]]||0) + p[1]; });
+    });
+    return {
+      actions: out.actions, citoyens: out.citoyens, assos: out.assos, communes: out.communes,
+      cats: Object.keys(out.cats).map(function(k){return [k, out.cats[k]];}).sort(function(a,b){return b[1]-a[1];}),
+      assosTop: Object.keys(out.assosTop).map(function(k){return [k, out.assosTop[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,5)
+    };
+  }
+
+  function renderBars(containerId, rows){
+    var max = Math.max.apply(null, rows.map(function(r){return r[1];}));
+    var el = document.getElementById(containerId);
+    el.innerHTML = rows.map(function(r,i){
+      var pct = Math.round((r[1]/max)*100);
+      return '<div class="bar-item"><div class="bar-label">'+r[0]+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;--bar-color:'+BAR_COLORS[i%BAR_COLORS.length]+'"></div></div><div class="bar-n">'+r[1]+'</div></div>';
+    }).join('');
+  }
+  function renderRank(containerId, rows){
+    var el = document.getElementById(containerId);
+    el.innerHTML = rows.map(function(r){
+      return '<li><span class="rank-name">'+r[0]+'</span><span class="rank-n">'+r[1]+'</span></li>';
+    }).join('');
+  }
+
+  function renderDash(){
+    var d = currentCommune==='ALL' ? aggAll() : Object.assign({}, DATA[currentCommune], {
+      cats: DATA[currentCommune].cats.slice().sort(function(a,b){return b[1]-a[1];}),
+      assosTop: DATA[currentCommune].assosTop.slice().sort(function(a,b){return b[1]-a[1];}).slice(0,5)
+    });
+    document.getElementById('kpi-actions').textContent = d.actions;
+    document.getElementById('kpi-citoyens').textContent = d.citoyens;
+    document.getElementById('kpi-assos').textContent = d.assos;
+    document.getElementById('kpi-communes').textContent = currentCommune==='ALL' ? COMMUNES.length : 1;
+    renderBars('bar-categories', d.cats.slice(0,5));
+    var communeRows = currentCommune==='ALL'
+      ? COMMUNES.map(function(c){return [c, DATA[c].actions];}).sort(function(a,b){return b[1]-a[1];})
+      : [[currentCommune, DATA[currentCommune].actions]];
+    renderBars('bar-communes', communeRows);
+    renderRank('rank-assos', d.assosTop);
+    renderRank('rank-categories', d.cats.slice(0,5));
+  }
+
+  function renderChips(){
+    var bar = document.getElementById('commune-bar');
+    var items = [['ALL','Toutes communes']].concat(COMMUNES.map(function(c){return [c,c];}));
+    bar.innerHTML = items.map(function(it){
+      return '<button class="chip'+(it[0]===currentCommune?' active':'')+'" data-c="'+it[0]+'">'+it[1]+'</button>';
+    }).join('') + '<select class="period-sel"><option>30 derniers jours</option><option>Trimestre</option><option>Depuis le pilote</option></select>';
+    Array.prototype.forEach.call(bar.querySelectorAll('.chip'), function(btn){
+      btn.addEventListener('click', function(){
+        currentCommune = btn.getAttribute('data-c');
+        renderChips(); renderDash();
+      });
+    });
+  }
+
+  renderChips();
+  renderDash();
+  setView('home');
+
+  // ---- Administration : communes & associations (démo, localStorage) ----
+  var CATS = ['Solidarité','Environnement','Culture','Sport','Entraide seniors'];
+  var editingCommune = null, editingAsso = null;
+
+  function loadLocal(key, fallback){
+    try{
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+  function saveLocal(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ /* stockage indisponible : la session reste utilisable sans persistance */ }
+  }
+
+  var adminCommunes = loadLocal('civica_communes', COMMUNES.map(function(c,i){
+    return {nom:c, slug:c.toLowerCase(), perimetre:'Pilote CAHM', referent:'', statut:'active'};
+  }));
+  var adminAssos = loadLocal('civica_assos', (function(){
+    var seen = {}, out = [];
+    COMMUNES.forEach(function(c){
+      DATA[c].assosTop.forEach(function(p){
+        if(!seen[p[0]]){
+          seen[p[0]] = true;
+          var topCat = DATA[c].cats.slice().sort(function(a,b){return b[1]-a[1];})[0][0];
+          out.push({nom:p[0], commune:c, referent:'', statut:'active', cats:[topCat]});
+        }
+      });
+    });
+    return out;
+  })());
+
+  function renderAdminCommunes(){
+    var tbl = document.getElementById('tbl-communes');
+    tbl.innerHTML = adminCommunes.map(function(c,i){
+      return '<tr><td>'+c.nom+'</td><td>'+c.slug+'</td><td>'+c.perimetre+'</td><td>'+(c.referent||'—')+'</td>'+
+        '<td><div class="row-actions"><button class="icon-btn" onclick="editCommune('+i+')">Modifier</button>'+
+        '<button class="icon-btn danger" onclick="deleteCommune('+i+')">Retirer</button></div></td></tr>';
+    }).join('');
+  }
+  function renderAdminAssos(){
+    var sel = document.getElementById('a-commune');
+    sel.innerHTML = adminCommunes.map(function(c){ return '<option value="'+c.nom+'">'+c.nom+'</option>'; }).join('');
+    var catsBox = document.getElementById('a-cats');
+    catsBox.innerHTML = CATS.map(function(cat){ return '<span class="cat-pill" data-cat="'+cat+'" onclick="toggleCat(this)">'+cat+'</span>'; }).join('');
+    var tbl = document.getElementById('tbl-assos');
+    tbl.innerHTML = adminAssos.map(function(a,i){
+      var perim = (a.cats && a.cats.length) ? a.cats.map(function(c){ return '<span class="cat-pill active" style="cursor:default">'+c+'</span>'; }).join(' ') : '<span class="local-note">aucun</span>';
+      return '<tr><td>'+a.nom+'</td><td>'+a.commune+'</td>'+
+        '<td><div class="cat-pills" style="margin-top:0">'+perim+'</div></td>'+
+        '<td><span class="status-dot '+a.statut+'"></span>'+(a.statut==='active'?'Active':'Inactive')+'</td>'+
+        '<td>'+(a.referent||'—')+'</td>'+
+        '<td><div class="row-actions"><button class="icon-btn" onclick="editAsso('+i+')">Modifier</button>'+
+        '<button class="icon-btn" onclick="toggleAssoStatut('+i+')">'+(a.statut==='active'?'Désactiver':'Activer')+'</button>'+
+        '<button class="icon-btn danger" onclick="deleteAsso('+i+')">Retirer</button></div></td></tr>';
+    }).join('');
+  }
+
+  function toggleForm(kind){
+    var el = document.getElementById('form-'+kind);
+    el.classList.toggle('open');
+    if(el.classList.contains('open')){
+      if(kind==='compte'){ onRoleChange(); }
+      try{ el.scrollIntoView({behavior:'smooth', block:'nearest'}); }catch(e){ /* environnement sans scrollIntoView : le formulaire reste visible sans défilement automatique */ }
+    } else {
+      if(kind==='commune'){ editingCommune = null; clearCommuneForm(); }
+      if(kind==='asso'){ editingAsso = null; clearAssoForm(); }
+      if(kind==='compte'){ editingCompte = null; clearCompteForm(); }
+    }
+  }
+  function clearCommuneForm(){ ['c-nom','c-slug','c-perimetre','c-referent'].forEach(function(id){ document.getElementById(id).value=''; }); }
+  function clearAssoForm(){
+    ['a-nom','a-referent'].forEach(function(id){ document.getElementById(id).value=''; });
+    Array.prototype.forEach.call(document.querySelectorAll('.cat-pill'), function(p){ p.classList.remove('active'); });
+  }
+  function toggleCat(el){ el.classList.toggle('active'); }
+  function toggleScratch(){
+    var el = document.getElementById('scratch-cover');
+    if(el) el.classList.toggle('scratched');
+  }
+
+  function editCommune(i){
+    editingCommune = i;
+    var c = adminCommunes[i];
+    document.getElementById('c-nom').value = c.nom;
+    document.getElementById('c-slug').value = c.slug;
+    document.getElementById('c-perimetre').value = c.perimetre;
+    document.getElementById('c-referent').value = c.referent;
+    document.getElementById('form-commune').classList.add('open');
+  }
+  function saveCommune(){
+    var nom = document.getElementById('c-nom').value.trim();
+    if(!nom){ return; }
+    var c = {
+      nom: nom,
+      slug: document.getElementById('c-slug').value.trim() || nom.toLowerCase(),
+      perimetre: document.getElementById('c-perimetre').value.trim() || 'Pilote CAHM',
+      referent: document.getElementById('c-referent').value.trim(),
+      statut: 'active'
+    };
+    if(editingCommune !== null){ adminCommunes[editingCommune] = c; } else { adminCommunes.push(c); }
+    saveLocal('civica_communes', adminCommunes);
+    editingCommune = null;
+    clearCommuneForm();
+    document.getElementById('form-commune').classList.remove('open');
+    renderAdminCommunes();
+    renderAdminAssos(); // rafraîchit la liste déroulante des communes
+  }
+  function deleteCommune(i){
+    if(!confirm('Retirer cette commune du référentiel ?')) return;
+    adminCommunes.splice(i,1);
+    saveLocal('civica_communes', adminCommunes);
+    renderAdminCommunes();
+    renderAdminAssos();
+  }
+
+  function editAsso(i){
+    editingAsso = i;
+    var a = adminAssos[i];
+    document.getElementById('a-nom').value = a.nom;
+    document.getElementById('a-referent').value = a.referent;
+    document.getElementById('form-asso').classList.add('open');
+    document.getElementById('a-commune').value = a.commune;
+    Array.prototype.forEach.call(document.querySelectorAll('.cat-pill'), function(p){
+      p.classList.toggle('active', a.cats.indexOf(p.getAttribute('data-cat')) !== -1);
+    });
+  }
+  function saveAsso(){
+    var nom = document.getElementById('a-nom').value.trim();
+    if(!nom){ return; }
+    var cats = Array.prototype.filter.call(document.querySelectorAll('.cat-pill.active'), function(){return true;})
+      .map(function(p){ return p.getAttribute('data-cat'); });
+    if(!cats.length){ alert('Sélectionnez au moins un périmètre (catégorie) pour cette association.'); return; }
+    var a = {
+      nom: nom,
+      commune: document.getElementById('a-commune').value,
+      referent: document.getElementById('a-referent').value.trim(),
+      statut: editingAsso!==null ? adminAssos[editingAsso].statut : 'active',
+      cats: cats
+    };
+    if(editingAsso !== null){ adminAssos[editingAsso] = a; } else { adminAssos.push(a); }
+    saveLocal('civica_assos', adminAssos);
+    editingAsso = null;
+    clearAssoForm();
+    document.getElementById('form-asso').classList.remove('open');
+    renderAdminAssos();
+  }
+  function toggleAssoStatut(i){
+    adminAssos[i].statut = adminAssos[i].statut==='active' ? 'inactive' : 'active';
+    saveLocal('civica_assos', adminAssos);
+    renderAdminAssos();
+  }
+  function deleteAsso(i){
+    if(!confirm('Retirer cette association du référentiel ?')) return;
+    adminAssos.splice(i,1);
+    saveLocal('civica_assos', adminAssos);
+    renderAdminAssos();
+  }
+
+  // ---- Comptes & niveaux d'accès ----
+  var ROLE_LABELS = {admin:'Admin DMMF', cahm:'Agent CAHM', commune:'Agent commune', association:'Association relais'};
+  var editingCompte = null;
+  var adminComptes = loadLocal('civica_comptes', [
+    {nom:'Amnas', email:'amnas@dmmf.fr', role:'admin', perimetre:'DMMF — accès complet', acces:'ecriture', statut:'active'},
+    {nom:'Nathalie Van Twembeke', email:'n.vantwembeke@cahm.fr', role:'cahm', perimetre:'CAHM — toutes communes pilotes', acces:'consultation', statut:'active'},
+    {nom:'Agent référent', email:'referent@agde.fr', role:'commune', perimetre:'Agde', acces:'consultation', statut:'active'},
+    {nom:'Agent référent', email:'referent@vias.fr', role:'commune', perimetre:'Vias', acces:'consultation', statut:'active'},
+    {nom:'Voisins Solidaires Agde', email:'contact@voisinssolidaires-agde.fr', role:'association', perimetre:'Voisins Solidaires Agde', acces:'consultation', statut:'active'}
+  ]);
+
+  function onRoleChange(){
+    var role = document.getElementById('u-role').value;
+    var sel = document.getElementById('u-perimetre');
+    if(role==='admin'){
+      sel.innerHTML = '<option value="DMMF — accès complet">DMMF — accès complet</option>';
+      sel.disabled = true;
+    } else if(role==='cahm'){
+      sel.innerHTML = '<option value="CAHM — toutes communes pilotes">CAHM — toutes communes pilotes</option>';
+      sel.disabled = true;
+    } else if(role==='commune'){
+      sel.disabled = false;
+      sel.innerHTML = adminCommunes.map(function(c){ return '<option value="'+c.nom+'">'+c.nom+'</option>'; }).join('');
+    } else {
+      sel.disabled = false;
+      sel.innerHTML = adminAssos.map(function(a){ return '<option value="'+a.nom+'">'+a.nom+'</option>'; }).join('');
+    }
+  }
+
+  function renderAdminComptes(){
+    var tbl = document.getElementById('tbl-comptes');
+    tbl.innerHTML = adminComptes.map(function(u,i){
+      return '<tr><td>'+u.nom+'</td><td>'+u.email+'</td><td>'+ROLE_LABELS[u.role]+'</td><td>'+u.perimetre+'</td>'+
+        '<td>'+(u.acces==='ecriture'?'Lecture / écriture':'Consultation')+'</td>'+
+        '<td><span class="status-dot '+u.statut+'"></span>'+(u.statut==='active'?'Actif':'Suspendu')+'</td>'+
+        '<td><div class="row-actions"><button class="icon-btn" onclick="editCompte('+i+')">Modifier</button>'+
+        '<button class="icon-btn" onclick="toggleCompteStatut('+i+')">'+(u.statut==='active'?'Suspendre':'Réactiver')+'</button>'+
+        '<button class="icon-btn danger" onclick="deleteCompte('+i+')">Retirer</button></div></td></tr>';
+    }).join('');
+  }
+  function clearCompteForm(){
+    ['u-nom','u-email'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('u-role').value = 'admin';
+    document.getElementById('u-acces').value = 'consultation';
+    onRoleChange();
+  }
+  function editCompte(i){
+    editingCompte = i;
+    var u = adminComptes[i];
+    document.getElementById('u-nom').value = u.nom;
+    document.getElementById('u-email').value = u.email;
+    document.getElementById('u-role').value = u.role;
+    document.getElementById('u-acces').value = u.acces;
+    onRoleChange();
+    document.getElementById('u-perimetre').value = u.perimetre;
+    document.getElementById('form-compte').classList.add('open');
+  }
+  function saveCompte(){
+    var nom = document.getElementById('u-nom').value.trim();
+    var email = document.getElementById('u-email').value.trim();
+    if(!nom || !email){ return; }
+    var u = {
+      nom: nom, email: email,
+      role: document.getElementById('u-role').value,
+      perimetre: document.getElementById('u-perimetre').value,
+      acces: document.getElementById('u-acces').value,
+      statut: editingCompte!==null ? adminComptes[editingCompte].statut : 'active'
+    };
+    if(editingCompte !== null){ adminComptes[editingCompte] = u; } else { adminComptes.push(u); }
+    saveLocal('civica_comptes', adminComptes);
+    editingCompte = null;
+    clearCompteForm();
+    document.getElementById('form-compte').classList.remove('open');
+    renderAdminComptes();
+  }
+  function toggleCompteStatut(i){
+    adminComptes[i].statut = adminComptes[i].statut==='active' ? 'inactive' : 'active';
+    saveLocal('civica_comptes', adminComptes);
+    renderAdminComptes();
+  }
+  function deleteCompte(i){
+    if(!confirm('Retirer ce compte ?')) return;
+    adminComptes.splice(i,1);
+    saveLocal('civica_comptes', adminComptes);
+    renderAdminComptes();
+  }
+
+  // ---- Reconnaissance : paliers non convertibles (actions par association / carte) ----
+  var TIERS = [
+    {id:'graine',  nom:'Graine',  seuil:5,  couleur:'#8AAE94'},
+    {id:'racine',  nom:'Racine',  seuil:15, couleur:'#5C8368'},
+    {id:'branche', nom:'Branche', seuil:30, couleur:'#4E7C5C'},
+    {id:'arbre',   nom:'Arbre',   seuil:60, couleur:'#2F5C3D'}
+  ];
+  var TIER_ICONS = {
+    graine:  '<circle cx="20" cy="24" r="5" fill="C"/>',
+    racine:  '<circle cx="20" cy="14" r="4" fill="C"/><path d="M20 18 L20 26 M20 22 L13 30 M20 22 L27 30" stroke="C" stroke-width="2" fill="none" stroke-linecap="round"/>',
+    branche: '<path d="M20 32 L20 16 M20 20 L12 12 M20 16 L28 8" stroke="C" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="20" cy="10" r="4" fill="C"/>',
+    arbre:   '<path d="M20 32 L20 22" stroke="C" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="14" r="10" fill="C"/>'
+  };
+  // Actions par association, agrégées une seule fois depuis les données du dashboard.
+  var ASSO_ACTIONS = (function(){
+    var out = {}, seen = {};
+    COMMUNES.forEach(function(c){
+      DATA[c].assosTop.forEach(function(p){
+        if(!seen[p[0]]){ seen[p[0]] = true; out[p[0]] = p[1]; }
+      });
+    });
+    return out;
+  })();
+  function tierFor(n){
+    var t = null;
+    TIERS.forEach(function(tier){ if(n >= tier.seuil) t = tier; });
+    return t;
+  }
+  function tierBadgeSvg(tierId, size){
+    var tier = TIERS.filter(function(t){return t.id===tierId;})[0];
+    if(!tier) return '';
+    var icon = TIER_ICONS[tierId].split('C').join(tier.couleur);
+    return '<svg width="'+(size||22)+'" height="'+(size||22)+'" viewBox="0 0 40 40">'+
+      '<circle cx="20" cy="20" r="19" fill="none" stroke="'+tier.couleur+'" stroke-width="1.4" opacity=".4"/>'+icon+'</svg>';
+  }
+
+  function renderReco(){
+    // Répartition agrégée des cartes par palier (illustrative), seuillée k>=15.
+    var K = 15;
+    var cartesParPalier = [['Graine',312],['Racine',148],['Branche',41],['Arbre',9]];
+
+    // Bandeau des 4 paliers : nb de cartes ayant atteint chaque palier (jamais d'association).
+    var row = document.getElementById('tier-row');
+    row.innerHTML = TIERS.map(function(t,i){
+      var nb = cartesParPalier[i][1];
+      var masked = nb < K;
+      var val = masked ? '<span style="font-size:.66rem;font-style:italic;font-weight:400">masqué</span>' : nb;
+      return '<div class="tier-card">'+tierBadgeSvg(t.id,44)+
+        '<div class="tier-name">'+t.nom+'</div>'+
+        '<div class="tier-threshold">dès '+t.seuil+' actions</div>'+
+        '<div class="tier-count">'+val+'</div><div class="tier-count-lbl">carte'+(!masked&&nb>1?'s':'')+'</div></div>';
+    }).join('');
+
+    // Indicateurs d'activité par association — simple classement, sans badge de palier.
+    var list = document.getElementById('asso-tier-list');
+    var rows = Object.keys(ASSO_ACTIONS).map(function(nom){ return [nom, ASSO_ACTIONS[nom]]; })
+      .sort(function(a,b){ return b[1]-a[1]; });
+    list.innerHTML = rows.map(function(r){
+      return '<li><span class="rank-name">'+r[0]+'</span><span class="rank-n">'+r[1]+' actions</span></li>';
+    }).join('');
+
+    var maxN = Math.max.apply(null, cartesParPalier.map(function(r){return r[1];}));
+    var el = document.getElementById('bar-cartes-palier');
+    el.innerHTML = cartesParPalier.map(function(r,i){
+      var masked = r[1] < K;
+      var pct = Math.round((r[1]/maxN)*100);
+      var val = masked ? '<span class="local-note" style="font-style:italic">masqué (k&lt;'+K+')</span>' : r[1];
+      return '<div class="bar-item"><div class="bar-label">'+r[0]+'</div><div class="bar-track">'+
+        (masked ? '' : '<div class="bar-fill" style="width:'+pct+'%;--bar-color:'+TIERS[i].couleur+'"></div>')+
+        '</div><div class="bar-n" style="'+(masked?'width:auto':'')+'">'+val+'</div></div>';
+    }).join('');
+  }
+</script>
+</body>
+</html>
