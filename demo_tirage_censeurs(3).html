@@ -170,6 +170,28 @@
 
   footer{margin-top:26px;text-align:center;font-size:11.5px;color:#5d6e8e;line-height:1.6}
 
+  /* ------- historique ------- */
+  .hist-panel{width:100%;max-width:360px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  .hist-head{display:flex;align-items:baseline;justify-content:space-between}
+  .hist-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:24px}
+  .hist-stats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .stat{flex:1;min-width:92px;background:var(--nuit-2);border-radius:12px;padding:10px 8px;text-align:center}
+  .stat .n{font-family:'Fraunces',serif;font-size:22px;font-weight:600}
+  .stat .l{font-size:11px;color:var(--brume);margin-top:2px}
+  .stat.ok .n{color:#7FC79A}
+  .stat.ko .n{color:#E08A7E}
+  .hist-list{display:flex;flex-direction:column;gap:8px}
+  .hist-row{display:flex;align-items:center;gap:10px;background:var(--nuit-2);border-radius:12px;padding:10px 12px}
+  .hist-num{flex:none;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--ivoire)}
+  .hist-txt{flex:1;min-width:0}
+  .hist-txt .t{font-size:14px;font-weight:500;line-height:1.25}
+  .hist-txt .d{font-size:11.5px;color:var(--brume);margin-top:1px}
+  .badge{flex:none;font-size:11px;font-weight:600;padding:4px 9px;border-radius:99px}
+  .badge.ok{background:rgba(127,199,154,.16);color:#7FC79A;border:1px solid rgba(127,199,154,.4)}
+  .badge.ko{background:rgba(224,138,126,.14);color:#E08A7E;border:1px solid rgba(224,138,126,.4)}
+  .hist-empty{text-align:center;color:var(--brume);font-size:14px;padding:18px 0}
+
   .hidden{display:none !important}
 
   @media (prefers-reduced-motion: reduce){
@@ -238,10 +260,26 @@
 
         <div class="actions-row" id="actionsRow">
           <button class="btn btn-blue" id="btnDefi">Lancer le défi · 120 s</button>
-          <button class="btn btn-primary" id="btnDone">C'est fait ✓</button>
+          <button class="btn btn-primary" id="btnOk">Réussi ✓</button>
+          <button class="btn btn-ghost" id="btnKo">Pas aujourd'hui ✗</button>
           <button class="btn btn-ghost" id="btnRedraw">Relancer</button>
         </div>
         <p class="done-line hidden" id="streakLine"></p>
+        <div class="actions-row">
+          <button class="btn btn-ghost" id="btnHist">Historique des tirages</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- écran historique -->
+    <section id="histScreen" class="hidden" style="width:100%">
+      <div class="hist-panel">
+        <div class="hist-head">
+          <h2>Historique</h2>
+          <button class="btn btn-ghost" id="btnBack">← Retour</button>
+        </div>
+        <div class="hist-stats" id="histStats"></div>
+        <div class="hist-list" id="histList"></div>
       </div>
     </section>
   </div>
@@ -282,13 +320,78 @@ $("dateLine").textContent = new Date().toLocaleDateString("fr-FR",{weekday:"long
 
 $("btnDraw").addEventListener("click", ()=>{ intro.classList.add("hidden"); drawZone.classList.remove("hidden"); tirer(); });
 $("btnRedraw").addEventListener("click", tirer);
-$("btnDone").addEventListener("click", marquerFait);
+$("btnOk").addEventListener("click", ()=>enregistrer(true));
+$("btnKo").addEventListener("click", ()=>enregistrer(false));
 $("btnDefi").addEventListener("click", lancerDefi);
+$("btnHist").addEventListener("click", ()=>{ drawZone.classList.add("hidden"); renderHist(); $("histScreen").classList.remove("hidden"); });
+$("btnBack").addEventListener("click", ()=>{ $("histScreen").classList.add("hidden"); drawZone.classList.remove("hidden"); });
+
+/* ===== Historique (localStorage, avec repli mémoire) ===== */
+const HIST_KEY="censeurs_demo_historique";
+let histo = chargerHist();
+function chargerHist(){
+  try{
+    const raw = localStorage.getItem(HIST_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  /* amorce de démonstration : tirages fictifs des jours précédents */
+  const j = n => { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); };
+  return [
+    {ts:j(1), id:36, titre:"Le Grand Silence",                type:"Défi",  fam:"attentionnel", ok:true,  seed:true},
+    {ts:j(2), id:2,  titre:"Le Manuel de Biologie Moléculaire", type:"Objet", fam:"cognitif",     ok:false, seed:true},
+    {ts:j(3), id:3,  titre:"La Brique Connue",                 type:"Mot",   fam:"cognitif",     ok:true,  seed:true},
+    {ts:j(4), id:1,  titre:"La Référence Circulaire",          type:"Mot",   fam:"cognitif",     ok:true,  seed:true}
+  ];
+}
+function sauverHist(){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(histo)); }catch(e){} }
+
+function enregistrer(ok){
+  if(!derniereCarte) return;
+  histo.unshift({ts:new Date().toISOString(), id:derniereCarte.id, titre:derniereCarte.titre,
+                 type:derniereCarte.type, fam:derniereCarte.famille, ok});
+  sauverHist();
+  $("btnOk").disabled=true; $("btnKo").disabled=true;
+  const s=$("streakLine");
+  if(ok){
+    streak++;
+    s.innerHTML=`Réussi — carte ajoutée à votre collection. Série : <b>${streak} jour${streak>1?"s":""}</b> 🔥`;
+  }else{
+    streak=0;
+    s.innerHTML=`Noté. La carte reviendra — la série repart à zéro.`;
+  }
+  s.classList.remove("hidden");
+}
+
+function renderHist(){
+  const tot=histo.length, oks=histo.filter(e=>e.ok).length, kos=tot-oks;
+  const taux= tot? Math.round(oks*100/tot) : 0;
+  $("histStats").innerHTML =
+    `<div class="stat"><div class="n">${tot}</div><div class="l">tirages</div></div>`+
+    `<div class="stat ok"><div class="n">${oks}</div><div class="l">réussis</div></div>`+
+    `<div class="stat ko"><div class="n">${kos}</div><div class="l">échecs</div></div>`+
+    `<div class="stat"><div class="n">${taux}%</div><div class="l">réussite</div></div>`;
+  const list=$("histList");
+  if(!tot){ list.innerHTML=`<p class="hist-empty">Aucun tirage pour l'instant.</p>`; return; }
+  list.innerHTML = histo.map(e=>{
+    const f = FAMILLES[e.fam];
+    const coul = f ? f.couleur : "var(--bleu)";
+    const date = new Date(e.ts).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+    return `<div class="hist-row">
+      <div class="hist-num" style="background:${coul}">${e.id}</div>
+      <div class="hist-txt">
+        <div class="t">${e.titre}</div>
+        <div class="d">${date} · ${e.type}${f?" · "+f.nom:""}${e.seed?" · exemple":""}</div>
+      </div>
+      <span class="badge ${e.ok?"ok":"ko"}">${e.ok?"Réussi":"Échec"}</span>
+    </div>`;
+  }).join("");
+}
 
 function tirer(){
   arreterTimer();
   $("reveal").classList.remove("visible");
   $("streakLine").classList.add("hidden");
+  $("btnOk").disabled=false; $("btnKo").disabled=false;
   $("timerWrap").classList.remove("visible");
   mainCard.classList.remove("flipped");
 
@@ -331,7 +434,7 @@ function afficherPanneau(c){
   $("familleLine").innerHTML = `<b>${f.nom}</b> — <em>« ${f.phrase} »</em>`;
   $("actionBox").innerHTML = `<b>Action&nbsp;:</b> ${c.action}`;
   $("btnDefi").classList.toggle("hidden", c.type!=="Défi");
-  $("btnDone").disabled=false;
+  $("btnOk").disabled=false; $("btnKo").disabled=false;
   $("reveal").classList.add("visible");
 }
 
@@ -352,7 +455,7 @@ function lancerDefi(){
       arreterTimer();
       $("ringNum").textContent="0";
       $("ringFg").style.strokeDashoffset=circ;
-      $("timerMsg").innerHTML="<b>Défi terminé.</b> Marquez la carte comme faite.";
+      $("timerMsg").innerHTML="<b>Défi terminé.</b> Réussi ou pas, enregistrez le résultat.";
       return;
     }
     maj();
@@ -361,13 +464,7 @@ function lancerDefi(){
 
 function arreterTimer(){ if(timerInt){clearInterval(timerInt); timerInt=null;} }
 
-function marquerFait(){
-  streak++;
-  $("btnDone").disabled=true;
-  const s=$("streakLine");
-  s.innerHTML=`Carte ajoutée à votre collection — série&nbsp;: <b>${streak} jour${streak>1?"s":""}</b> 🔥`;
-  s.classList.remove("hidden");
-}
+
 </script>
 </body>
 </html>
