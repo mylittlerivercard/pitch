@@ -56,6 +56,9 @@
   .wordmark small{display:block;font-weight:300;font-size:10.5px;color:var(--brume);letter-spacing:.04em}
   .demo-tag{margin-left:auto;font-size:10.5px;color:var(--nuit);background:var(--orange);
     padding:3px 9px;border-radius:99px;font-weight:600}
+  .streak-badge{margin-left:auto;font-size:13px;font-weight:600;background:var(--nuit-2);
+    border:1px solid rgba(159,176,206,.3);border-radius:99px;padding:4px 11px}
+  .demo-tag{margin-left:10px}
 
   /* ------- écran d'accueil ------- */
   .stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
@@ -191,20 +194,51 @@
   .badge.ok{background:rgba(127,199,154,.16);color:#7FC79A;border:1px solid rgba(127,199,154,.4)}
   .badge.ko{background:rgba(224,138,126,.14);color:#E08A7E;border:1px solid rgba(224,138,126,.4)}
   .hist-empty{text-align:center;color:var(--brume);font-size:14px;padding:18px 0}
+  .reason-row{display:none;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+  .reason-row.visible{display:flex}
+  .reason-row .lbl{width:100%;text-align:center;font-size:13px;color:var(--brume)}
+  .chip-btn{font:inherit;font-size:13px;cursor:pointer;color:var(--ivoire);background:var(--nuit-2);
+    border:1px solid rgba(159,176,206,.35);border-radius:99px;padding:8px 14px}
+  .chip-btn:hover{border-color:var(--orange)}
+  .chip-btn:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+  /* carte dorée */
+  .main-card.golden .face{box-shadow:0 0 0 3px #E8B84B, 0 0 28px rgba(232,184,75,.55)}
+  .main-card.golden .back{box-shadow:0 0 0 2px rgba(232,184,75,.0)}
+  .chip-gold{background:linear-gradient(120deg,#B8860B,#E8B84B);color:#231303 !important}
+  #jokerBtn{border-color:#E8B84B;color:#E8B84B}
+  #jokerBtn:hover{background:rgba(232,184,75,.12)}
 
   .hidden{display:none !important}
 
+  @keyframes pulseRing{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  .ring.pulse{animation:pulseRing .5s ease-in-out 2}
+  .onboard{position:fixed;inset:0;background:rgba(8,14,28,.92);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .onboard-box{background:var(--nuit-2);border:1px solid rgba(159,176,206,.3);border-radius:18px;max-width:340px;padding:26px 22px;text-align:center}
+  .onboard-box h2{font-family:'Fraunces',serif;font-weight:600;font-size:23px;margin-bottom:14px}
+  .onboard-box ol{text-align:left;margin:0 0 18px 18px;font-size:14.5px;line-height:1.65;color:var(--ivoire)}
+  .onboard-box ol b{color:var(--orange)}
   @media (prefers-reduced-motion: reduce){
     .card,.deck-area.shuffling .g1,.deck-area.shuffling .g2,.deck-area.shuffling .main-card{animation:none !important;transition:none !important}
   }
 </style>
 </head>
 <body>
+<div class="onboard hidden" id="onboard">
+  <div class="onboard-box">
+    <h2>Les Sept Censeurs</h2>
+    <ol>
+      <li>Chaque matin, <b>tirez votre carte du jour</b> : un micro-exercice pour déjouer un frein de l'imagination.</li>
+      <li><b>1 à 3 minutes</b> suffisent — puis enregistrez : réussi ou pas aujourd'hui.</li>
+      <li>Chaque réussite nourrit votre <b>série 🔥</b> et votre collection. Un joker par semaine protège la série.</li>
+    </ol>
+    <button class="btn btn-primary" id="btnOnboardOk">C'est parti</button>
+  </div>
+</div>
 <div class="phone">
   <header>
     <div class="logo" aria-hidden="true"></div>
     <div class="wordmark">companion<small>by beOtop</small></div>
-    <span class="demo-tag">démo</span>
+    <div class="streak-badge">🔥 <span id="streakCount">0</span></div><span class="demo-tag">démo</span>
   </header>
 
   <div class="stage">
@@ -227,7 +261,7 @@
             <div class="monogram">7<span>LES SEPT CENSEURS</span></div>
           </div>
           <div class="face" id="cardFace">
-            <img class="photo" id="cardPhoto" alt="">
+            <img class="photo" id="cardPhoto" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
             <div class="face-frame"></div>
             <div class="corner" id="cornerT">–</div>
             <div class="face-body">
@@ -241,7 +275,7 @@
         </div>
       </div>
 
-      <div class="reveal" id="reveal">
+      <div class="reveal" id="reveal" aria-live="polite">
         <div class="reveal-title" id="revealTitle"></div>
         <p class="famille-line" id="familleLine"></p>
         <div class="action-box" id="actionBox"></div>
@@ -262,9 +296,20 @@
           <button class="btn btn-blue" id="btnDefi">Lancer le défi · 120 s</button>
           <button class="btn btn-primary" id="btnOk">Réussi ✓</button>
           <button class="btn btn-ghost" id="btnKo">Pas aujourd'hui ✗</button>
-          <button class="btn btn-ghost" id="btnRedraw">Relancer</button>
+          <button class="btn btn-ghost" id="btnRedraw">Relancer (démo)</button>
+        </div>
+        <div class="reason-row" id="reasonRow">
+          <span class="lbl">Pourquoi pas aujourd'hui ?</span>
+          <button class="chip-btn" data-motif="Pas le temps">Je n'ai pas le temps</button>
+          <button class="chip-btn" data-motif="Pas l'envie">Pas l'envie</button>
+          <button class="chip-btn" data-motif="Pas adapté">Pas adapté à ma journée</button>
+          <button class="chip-btn" data-motif="">Sans motif</button>
         </div>
         <p class="done-line hidden" id="streakLine"></p>
+        <p class="done-line hidden" id="nextLine"></p>
+        <div class="actions-row">
+          <button class="chip-btn hidden" id="jokerBtn">🃏 Utiliser mon joker — protéger la série</button>
+        </div>
         <div class="actions-row">
           <button class="btn btn-ghost" id="btnHist">Historique des tirages</button>
         </div>
@@ -314,15 +359,55 @@ const CARTES = [
 /* ===== Éléments ===== */
 const $ = id => document.getElementById(id);
 const intro=$("intro"), drawZone=$("drawZone"), deckArea=$("deckArea"), mainCard=$("mainCard");
-let derniereCarte=null, streak=0, timerInt=null, indexTirage=0;
+function lireLS(k,def){ try{const v=localStorage.getItem(k); return v===null?def:JSON.parse(v);}catch(e){return def;} }
+function ecrireLS(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+let derniereCarte=null, timerInt=null, indexTirage=0, nextInt=null, prevStreak=0;
+let streak = lireLS("censeurs_demo_streak", 0);
+function majStreakBadge(){ $("streakCount").textContent = streak; }
+
+/* onboarding : une seule fois */
+if(!lireLS("censeurs_onboarding_vu", false)){
+  $("onboard").classList.remove("hidden");
+}
+$("btnOnboardOk").addEventListener("click", ()=>{
+  $("onboard").classList.add("hidden");
+  ecrireLS("censeurs_onboarding_vu", true);
+});
+
+/* joker : 1 par semaine */
+function cleSemaine(){ const d=new Date(), j=new Date(d.getFullYear(),0,1);
+  return d.getFullYear()+"-S"+Math.ceil(((d-j)/864e5 + j.getDay()+1)/7); }
+function jokerDispo(){ const jk=lireLS("censeurs_demo_joker", null);
+  return !(jk && jk.sem===cleSemaine() && jk.used); }
+$("jokerBtn").addEventListener("click", ()=>{
+  streak = prevStreak; ecrireLS("censeurs_demo_streak", streak); majStreakBadge();
+  ecrireLS("censeurs_demo_joker", {sem:cleSemaine(), used:true});
+  $("jokerBtn").classList.add("hidden");
+  $("streakLine").innerHTML = `Joker utilisé — série protégée : <b>${streak} jour${streak>1?"s":""}</b> 🃏 (prochain joker la semaine prochaine)`;
+});
+
+/* compte à rebours jusqu'à minuit */
+function afficherCompteur(){
+  const maj = ()=>{
+    const now=new Date(), mn=new Date(now); mn.setHours(24,0,0,0);
+    const ms=mn-now, hh=Math.floor(ms/36e5), mm=Math.floor(ms%36e5/6e4);
+    $("nextLine").innerHTML = `Prochaine carte dans <b>${hh} h ${String(mm).padStart(2,"0")} min</b> — en démo, « Relancer » reste actif.`;
+  };
+  maj();
+  if(nextInt) clearInterval(nextInt);
+  nextInt=setInterval(maj, 30000);
+  $("nextLine").classList.remove("hidden");
+}
 
 $("dateLine").textContent = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
 
-$("btnDraw").addEventListener("click", ()=>{ intro.classList.add("hidden"); drawZone.classList.remove("hidden"); tirer(); });
-$("btnRedraw").addEventListener("click", tirer);
+$("btnDraw").addEventListener("click", ()=>{ intro.classList.add("hidden"); drawZone.classList.remove("hidden"); tirer("jour"); });
+$("btnRedraw").addEventListener("click", ()=>tirer("demo"));
 $("btnOk").addEventListener("click", ()=>enregistrer(true));
-$("btnKo").addEventListener("click", ()=>enregistrer(false));
-$("btnDefi").addEventListener("click", lancerDefi);
+$("btnKo").addEventListener("click", ()=>{ $("reasonRow").classList.toggle("visible"); });
+document.querySelectorAll("#reasonRow .chip-btn").forEach(b=>
+  b.addEventListener("click", ()=>enregistrer(false, b.dataset.motif)));
+$("btnDefi").addEventListener("click", ()=>lancerDefi());
 $("btnHist").addEventListener("click", ()=>{ drawZone.classList.add("hidden"); renderHist(); $("histScreen").classList.remove("hidden"); });
 $("btnBack").addEventListener("click", ()=>{ $("histScreen").classList.add("hidden"); drawZone.classList.remove("hidden"); });
 
@@ -338,28 +423,36 @@ function chargerHist(){
   const j = n => { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); };
   return [
     {ts:j(1), id:36, titre:"Le Grand Silence",                type:"Défi",  fam:"attentionnel", ok:true,  seed:true},
-    {ts:j(2), id:2,  titre:"Le Manuel de Biologie Moléculaire", type:"Objet", fam:"cognitif",     ok:false, seed:true},
-    {ts:j(3), id:3,  titre:"La Brique Connue",                 type:"Mot",   fam:"cognitif",     ok:true,  seed:true},
+    {ts:j(2), id:2,  titre:"Le Manuel de Biologie Moléculaire", type:"Objet", fam:"cognitif",     ok:false, motif:"Pas le temps", seed:true},
+    {ts:j(3), id:3,  titre:"La Brique Connue",                 type:"Mot",   fam:"cognitif",     ok:true,  dore:true, seed:true},
     {ts:j(4), id:1,  titre:"La Référence Circulaire",          type:"Mot",   fam:"cognitif",     ok:true,  seed:true}
   ];
 }
 function sauverHist(){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(histo)); }catch(e){} }
 
-function enregistrer(ok){
+function enregistrer(ok, motif){
   if(!derniereCarte) return;
   histo.unshift({ts:new Date().toISOString(), id:derniereCarte.id, titre:derniereCarte.titre,
-                 type:derniereCarte.type, fam:derniereCarte.famille, ok});
+                 type:derniereCarte.type, fam:derniereCarte.famille, ok, motif: motif||null,
+                 dore: !!derniereCarte.dore});
   sauverHist();
   $("btnOk").disabled=true; $("btnKo").disabled=true;
+  $("reasonRow").classList.remove("visible");
   const s=$("streakLine");
   if(ok){
     streak++;
-    s.innerHTML=`Réussi — carte ajoutée à votre collection. Série : <b>${streak} jour${streak>1?"s":""}</b> 🔥`;
+    ecrireLS("censeurs_demo_streak", streak); majStreakBadge();
+    s.innerHTML=`Réussi${derniereCarte.dore?" — carte dorée ✨":""} — ajoutée à votre collection. Série : <b>${streak} jour${streak>1?"s":""}</b> 🔥`;
   }else{
+    prevStreak = streak;
     streak=0;
-    s.innerHTML=`Noté. La carte reviendra — la série repart à zéro.`;
+    ecrireLS("censeurs_demo_streak", streak); majStreakBadge();
+    s.innerHTML= motif ? `Noté (${motif.toLowerCase()}). La série repart à zéro.`
+                       : `Noté. La série repart à zéro.`;
+    if(prevStreak>0 && jokerDispo()) $("jokerBtn").classList.remove("hidden");
   }
   s.classList.remove("hidden");
+  afficherCompteur();
 }
 
 function renderHist(){
@@ -379,26 +472,53 @@ function renderHist(){
     return `<div class="hist-row">
       <div class="hist-num" style="background:${coul}">${e.id}</div>
       <div class="hist-txt">
-        <div class="t">${e.titre}</div>
-        <div class="d">${date} · ${e.type}${f?" · "+f.nom:""}${e.seed?" · exemple":""}</div>
+        <div class="t">${e.dore?"✨ ":""}${e.titre}</div>
+        <div class="d">${date} · ${e.type}${f?" · "+f.nom:""}${e.motif?" · "+e.motif:""}${e.seed?" · exemple":""}</div>
       </div>
       <span class="badge ${e.ok?"ok":"ko"}">${e.ok?"Réussi":"Échec"}</span>
     </div>`;
   }).join("");
 }
 
-function tirer(){
+/* Carte du jour : fixée pour la journée, anti-répétition sur les tirages récents */
+function carteDuJour(){
+  const auj = new Date().toISOString().slice(0,10);
+  const st = lireLS("censeurs_carte_du_jour", null);
+  if(st && st.date===auj){
+    const f = CARTES.find(x=>x.id===st.id);
+    if(f) return {...f, dore: !!st.dore};
+  }
+  const recentes = lireLS("censeurs_recentes", []);
+  let cand = CARTES.filter(x=>!recentes.includes(x.id));
+  if(!cand.length) cand = CARTES;
+  const ch = cand[Math.floor(Math.random()*cand.length)];
+  const dore = Math.random()<0.25; /* 1/20 en production */
+  ecrireLS("censeurs_carte_du_jour", {date:auj, id:ch.id, dore});
+  ecrireLS("censeurs_recentes", [...recentes, ch.id].slice(-(CARTES.length-1)));
+  return {...ch, dore};
+}
+
+function tirer(mode){
   arreterTimer();
   $("reveal").classList.remove("visible");
   $("streakLine").classList.add("hidden");
   $("btnOk").disabled=false; $("btnKo").disabled=false;
+  $("reasonRow").classList.remove("visible");
+  $("nextLine").classList.add("hidden");
+  $("jokerBtn").classList.add("hidden");
   $("timerWrap").classList.remove("visible");
   mainCard.classList.remove("flipped");
 
   /* mode démo : cycle 1 → 2 → 3 → 36, chaque tirage montre une carte différente
      (en production : tirage aléatoire avec anti-répétition 14 jours) */
-  const c = CARTES[indexTirage % CARTES.length];
-  indexTirage++;
+  /* "jour" : carte du jour fixe (production) — "demo" : carte suivante du cycle */
+  let c;
+  if(mode==="demo"){
+    c = {...CARTES[indexTirage % CARTES.length], dore: Math.random()<0.25};
+    indexTirage++;
+  } else {
+    c = carteDuJour();
+  }
   derniereCarte=c;
 
   const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -406,6 +526,7 @@ function tirer(){
   setTimeout(()=>{
     deckArea.classList.remove("shuffling");
     remplirCarte(c);
+    if(navigator.vibrate) navigator.vibrate(30);
     requestAnimationFrame(()=> mainCard.classList.add("flipped"));
     setTimeout(()=> afficherPanneau(c), reduit?0:450);
   }, reduit?0:1400);
@@ -416,6 +537,7 @@ function remplirCarte(c){
   const face = document.querySelector(".face");
   face.style.setProperty("--fam", f.couleur);
   face.classList.toggle("has-img", !!c.image);
+  mainCard.classList.toggle("golden", !!c.dore);
   const ph = $("cardPhoto");
   if(c.image){ ph.src=c.image; ph.alt=`Carte ${c.id} — ${c.titre}`; }
   else { ph.removeAttribute("src"); ph.alt=""; }
@@ -429,6 +551,7 @@ function remplirCarte(c){
 function afficherPanneau(c){
   const f = FAMILLES[c.famille];
   $("revealTitle").innerHTML =
+    (c.dore?`<span class="type-chip chip-gold">✨ Carte dorée</span> `:"")+
     `<span class="type-chip" style="background:${f.couleur}">N° ${c.id} · ${c.type}</span>`+
     `<h3>${c.titre}</h3><p class="citation2">${c.citation}</p>`;
   $("familleLine").innerHTML = `<b>${f.nom}</b> — <em>« ${f.phrase} »</em>`;
@@ -436,30 +559,34 @@ function afficherPanneau(c){
   $("btnDefi").classList.toggle("hidden", c.type!=="Défi");
   $("btnOk").disabled=false; $("btnKo").disabled=false;
   $("reveal").classList.add("visible");
+  /* reprise d'un défi interrompu (onglet fermé pendant le compte à rebours) */
+  const finDefi = lireLS("censeurs_defi_fin", null);
+  if(c.type==="Défi" && finDefi && finDefi > Date.now()) lancerDefi(finDefi);
+  else if(finDefi && finDefi <= Date.now()) ecrireLS("censeurs_defi_fin", null);
 }
 
-function lancerDefi(){
+function lancerDefi(finExistante){
   $("btnDefi").classList.add("hidden");
   $("timerWrap").classList.add("visible");
   $("timerMsg").textContent="Défi en cours — tenez bon.";
   const total=120, circ=326.7;
-  let restant=total;
+  const fin = finExistante || (Date.now() + total*1000);
+  ecrireLS("censeurs_defi_fin", fin);
   const maj=()=>{
+    const restant = Math.max(0, Math.ceil((fin - Date.now())/1000));
     $("ringNum").textContent=restant;
     $("ringFg").style.strokeDashoffset = circ*(1-restant/total);
-  };
-  maj();
-  timerInt=setInterval(()=>{
-    restant--;
     if(restant<=0){
       arreterTimer();
-      $("ringNum").textContent="0";
-      $("ringFg").style.strokeDashoffset=circ;
+      ecrireLS("censeurs_defi_fin", null);
+      const ring=document.querySelector(".ring");
+      ring.classList.add("pulse"); setTimeout(()=>ring.classList.remove("pulse"), 1100);
+      if(navigator.vibrate) navigator.vibrate([60,40,60]);
       $("timerMsg").innerHTML="<b>Défi terminé.</b> Réussi ou pas, enregistrez le résultat.";
-      return;
     }
-    maj();
-  },1000);
+  };
+  maj();
+  timerInt=setInterval(maj, 500);
 }
 
 function arreterTimer(){ if(timerInt){clearInterval(timerInt); timerInt=null;} }
