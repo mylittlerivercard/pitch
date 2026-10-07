@@ -62,7 +62,11 @@
 
   /* ------- écran d'accueil ------- */
   .stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-  .intro h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,8vw,34px);line-height:1.15;margin:18px 0 10px}
+  .titre-jeu{margin:0 0 22px;padding-bottom:18px;border-bottom:1px solid rgba(159,176,206,.25)}
+  .titre-jeu .t-petit{display:block;font-size:11.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--brume);margin-bottom:8px}
+  .titre-jeu .t-grand{display:block;font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(30px,9vw,38px);line-height:1.05;letter-spacing:.04em;color:#fff;text-transform:uppercase}
+  .titre-jeu .t-moyen{display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#BFD4F2;margin-top:10px}
+  .intro h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(24px,7vw,28px);line-height:1.15;margin:8px 0 10px}
   .intro p.baseline{font-size:15px;color:var(--brume);max-width:30ch;margin:0 auto 28px;line-height:1.5}
   .date-line{font-size:12.5px;color:var(--brume);margin-bottom:6px}
 
@@ -153,6 +157,22 @@
     padding:14px 16px;font-size:15px;line-height:1.55;text-align:left;
   }
   .action-box b{color:var(--orange);font-weight:600}
+  /* cartouche descriptif blanc (maquette Laurent) */
+  .cartouche{background:#fff;color:#1b1b1f;border-radius:18px;padding:18px 16px 16px;box-shadow:0 10px 28px rgba(0,0,0,.35);text-align:center}
+  .cartouche .famille-line{color:#1b1b1f;font-size:12.5px;line-height:1.45}
+  .cartouche .famille-line .fl-nom{display:block;font-family:'Fraunces',serif;font-weight:400;font-size:19px;letter-spacing:.02em;text-transform:uppercase;color:#1b1b1f}
+  .cartouche .famille-line .fl-phrase{display:block;font-family:'Fraunces',serif;font-size:12.5px;margin:2px 0 8px}
+  .cartouche .famille-line .fl-obj b{color:#1b1b1f;font-weight:700}
+  .cartouche{margin-top:18px}
+  .cartouche .famille-line .fl-obj{display:block;font-family:'Fraunces',serif;font-size:11px;color:#333;line-height:1.4}
+  .cartouche .cadre{border:1px solid #555;margin-top:14px;padding:8px 12px 14px}
+  .cartouche .reveal-title{margin-top:-4px}
+  .cartouche .reveal-title .type-chip{font-size:10px;margin:0 3px 6px}
+  .cartouche .reveal-title .num{display:block;font-family:'Fraunces',serif;font-size:28px;line-height:1;color:#1b1b1f;background:#fff;width:fit-content;margin:-22px auto 6px;padding:0 10px}
+  .cartouche .reveal-title h3{color:#1b1b1f;font-weight:400;font-size:19px}
+  .cartouche .reveal-title .citation2{color:#333;font-size:15px;margin:12px 0 14px;line-height:1.35}
+  .cartouche .action-box{background:none;border:0;padding:0;font-family:'Fraunces',serif;font-size:12.5px;line-height:1.45;text-align:center;font-weight:600;color:#1b1b1f}
+  .cartouche .action-box b{display:block;color:#1b1b1f;font-weight:400;font-size:12px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
   .actions-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
   /* ------- timer défi ------- */
@@ -208,6 +228,12 @@
   #jokerBtn{border-color:#E8B84B;color:#E8B84B}
   #jokerBtn:hover{background:rgba(232,184,75,.12)}
 
+  .btn-arrow{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid rgba(159,176,206,.35);background:var(--nuit-2);color:var(--ivoire);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+  .btn-arrow:hover{border-color:var(--orange);color:var(--orange)}
+  .btn-arrow:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+  .btn-arrow svg{width:20px;height:20px}
+  .hist-head{justify-content:flex-start;align-items:center;gap:12px}
+  .back-row{width:100%;max-width:360px;display:flex;margin:0 auto 6px}
   .hidden{display:none !important}
 
   @keyframes pulseRing{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
@@ -244,6 +270,11 @@
   <div class="stage">
     <!-- écran d'accueil -->
     <section class="intro" id="intro">
+      <div class="titre-jeu">
+        <span class="t-petit">Jeu de 42 cartes</span>
+        <h2 class="t-grand" style="margin:0">Les Sept Censeurs</h2>
+        <span class="t-moyen">qui bloquent l'imagination</span>
+      </div>
       <p class="date-line" id="dateLine"></p>
       <h1>Carte du jour</h1>
       <p class="baseline">Penser en dehors de la boîte, c'est offrir à son cerveau de se dégourdir les neurones&nbsp;!</p>
@@ -252,6 +283,7 @@
 
     <!-- zone de tirage -->
     <section id="drawZone" class="hidden" style="width:100%">
+      <div class="back-row"><button class="btn-arrow" id="btnHome" aria-label="Retour à l'accueil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button></div>
       <div class="deck-area" id="deckArea">
         <div class="card ghost g1"><div class="back"><div class="back-frame"></div></div></div>
         <div class="card ghost g2"><div class="back"><div class="back-frame"></div></div></div>
@@ -276,9 +308,13 @@
       </div>
 
       <div class="reveal" id="reveal" aria-live="polite">
-        <div class="reveal-title" id="revealTitle"></div>
-        <p class="famille-line" id="familleLine"></p>
-        <div class="action-box" id="actionBox"></div>
+        <div class="cartouche">
+          <p class="famille-line" id="familleLine"></p>
+          <div class="cadre">
+            <div class="reveal-title" id="revealTitle"></div>
+            <div class="action-box" id="actionBox"></div>
+          </div>
+        </div>
 
         <div class="timer-wrap" id="timerWrap">
           <div class="ring">
@@ -320,8 +356,8 @@
     <section id="histScreen" class="hidden" style="width:100%">
       <div class="hist-panel">
         <div class="hist-head">
+          <button class="btn-arrow" id="btnBack" aria-label="Retour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
           <h2>Historique</h2>
-          <button class="btn btn-ghost" id="btnBack">← Retour</button>
         </div>
         <div class="hist-stats" id="histStats"></div>
         <div class="hist-list" id="histList"></div>
@@ -338,8 +374,8 @@
 <script>
 /* ===== Données : 3 cartes d'exemple (sur 42) ===== */
 const FAMILLES = {
-  cognitif:     {nom:"Censeur Cognitif",     phrase:"Je ne peux imaginer que ce que je connais", couleur:"var(--fam-cognitif)"},
-  attentionnel: {nom:"Censeur Attentionnel", phrase:"Je n'ai pas le temps de penser",            couleur:"var(--fam-attentionnel)"}
+  cognitif:     {nom:"Censeur Cognitif",     phrase:"Je ne peux imaginer que ce que je connais", couleur:"var(--fam-cognitif)", objectif:"Sortir des boucles de pensées et forcer la recombinaison de matériaux étrangers."},
+  attentionnel: {nom:"Censeur Attentionnel", phrase:"Je n'ai pas le temps de penser",            couleur:"var(--fam-attentionnel)", objectif:"Réintroduire le vide, l'ennui volontaire et la jachère mentale."}
 };
 const CARTES = [
   { id:1, famille:"cognitif", type:"Mot", titre:"La Référence Circulaire",
@@ -409,6 +445,7 @@ document.querySelectorAll("#reasonRow .chip-btn").forEach(b=>
   b.addEventListener("click", ()=>enregistrer(false, b.dataset.motif)));
 $("btnDefi").addEventListener("click", ()=>lancerDefi());
 $("btnHist").addEventListener("click", ()=>{ drawZone.classList.add("hidden"); renderHist(); $("histScreen").classList.remove("hidden"); });
+$("btnHome").addEventListener("click", ()=>{ drawZone.classList.add("hidden"); intro.classList.remove("hidden"); });
 $("btnBack").addEventListener("click", ()=>{ $("histScreen").classList.add("hidden"); drawZone.classList.remove("hidden"); });
 
 /* ===== Historique (localStorage, avec repli mémoire) ===== */
@@ -551,11 +588,12 @@ function remplirCarte(c){
 function afficherPanneau(c){
   const f = FAMILLES[c.famille];
   $("revealTitle").innerHTML =
+    `<span class="num">${c.id}</span>`+
     (c.dore?`<span class="type-chip chip-gold">✨ Carte dorée</span> `:"")+
-    `<span class="type-chip" style="background:${f.couleur}">N° ${c.id} · ${c.type}</span>`+
+    `<span class="type-chip" style="background:${f.couleur}">${c.type}</span>`+
     `<h3>${c.titre}</h3><p class="citation2">${c.citation}</p>`;
-  $("familleLine").innerHTML = `<b>${f.nom}</b> — <em>« ${f.phrase} »</em>`;
-  $("actionBox").innerHTML = `<b>Action&nbsp;:</b> ${c.action}`;
+  $("familleLine").innerHTML = `<span class="fl-nom">${f.nom}</span><span class="fl-phrase">« ${f.phrase} »</span><span class="fl-obj"><b>Objectif&nbsp;:</b> ${f.objectif}</span>`;
+  $("actionBox").innerHTML = `<b>Action</b>${c.action}`;
   $("btnDefi").classList.toggle("hidden", c.type!=="Défi");
   $("btnOk").disabled=false; $("btnKo").disabled=false;
   $("reveal").classList.add("visible");
