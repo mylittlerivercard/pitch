@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIVICA — Vidéos de démonstration</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121b2e;
+    --border: #233150;
+    --text: #e8edf7;
+    --muted: #9aabc9;
+    --accent: #3b82f6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header {
+    padding: 48px 24px 24px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .card h2 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+  .card p {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+    display: block;
+  }
+  footer {
+    text-align: center;
+    padding: 32px 24px 48px;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>CIVICA — Vidéos de démonstration</h1>
+  <p>Les quatre espaces de la plateforme, avec textes explicatifs incrustés à l'écran.</p>
+</header>
+<main>
+  <div class="card">
+    <h2>1. Espace Citoyen</h2>
+    <p>Déclaration et suivi des participations citoyennes.</p>
+    <video controls preload="metadata" playsinline>
+      <source src="videos/1-espace-citoyen.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="card">
+    <h2>2. Espace Association</h2>
+    <p>Gestion des participations déclarées par les citoyens, validation et rejet motivé.</p>
+    <video controls preload="metadata" playsinline>
+      <source src="videos/2-espace-association.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="card">
+    <h2>3. Espace Commune</h2>
+    <p>Vue d'ensemble du périmètre communal, indicateurs et points d'attention.</p>
+    <video controls preload="metadata" playsinline>
+      <source src="videos/3-espace-commune.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="card">
+    <h2>4. Espace Agglo</h2>
+    <p>Critères du pilote suivis avec la CAHM et Gigamed.</p>
+    <video controls preload="metadata" playsinline>
+      <source src="videos/4-espace-agglo.mp4" type="video/mp4">
+    </video>
+  </div>
+</main>
+<footer>
+  CIVICA — DMMF / Delta Multimedia France
+</footer>
+</body>
+</html>
