@@ -81,28 +81,28 @@
   <div class="card">
     <h2>1. Espace Citoyen</h2>
     <p>Déclaration et suivi des participations citoyennes.</p>
-    <video controls preload="metadata" playsinline>
+    <video controls preload="metadata" playsinline data-video-label="1-Espace-Citoyen">
       <source src="1-Espace_Citoyen_annote.mp4" type="video/mp4">
     </video>
   </div>
   <div class="card">
     <h2>2. Espace Association</h2>
     <p>Gestion des participations déclarées par les citoyens, validation et rejet motivé.</p>
-    <video controls preload="metadata" playsinline>
+    <video controls preload="metadata" playsinline data-video-label="2-Espace-Association">
       <source src="2-Espace_Association_annote.mp4" type="video/mp4">
     </video>
   </div>
   <div class="card">
     <h2>3. Espace Commune</h2>
     <p>Vue d'ensemble du périmètre communal, indicateurs et points d'attention.</p>
-    <video controls preload="metadata" playsinline>
+    <video controls preload="metadata" playsinline data-video-label="3-Espace-Commune">
       <source src="3-Espace_Commune_annote.mp4" type="video/mp4">
     </video>
   </div>
   <div class="card">
     <h2>4. Espace Agglo</h2>
     <p>Critères du pilote suivis avec la CAHM et Gigamed.</p>
-    <video controls preload="metadata" playsinline>
+    <video controls preload="metadata" playsinline data-video-label="4-Espace-Agglo">
       <source src="4-Espace_Agglo_annote.mp4" type="video/mp4">
     </video>
   </div>
@@ -110,5 +110,26 @@
 <footer>
   CIVICA — DMMF / Delta Multimedia France
 </footer>
+<script>
+  // Suivi par vidéo : une fois par lecture et par fin de lecture, via l'API events de GoatCounter.
+  document.querySelectorAll('video[data-video-label]').forEach(function (video) {
+    var label = video.getAttribute('data-video-label');
+    var started = false;
+    video.addEventListener('play', function () {
+      if (started) return;
+      started = true;
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path: 'video-lancee/' + label, event: true });
+      }
+    });
+    video.addEventListener('ended', function () {
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path: 'video-terminee/' + label, event: true });
+      }
+    });
+  });
+</script>
+<script data-goatcounter="https://civica.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
