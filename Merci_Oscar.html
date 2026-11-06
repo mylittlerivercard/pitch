@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>beOtop × Merci Oscar — Proposition de partenariat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --beo-dark: #007F85;    
+    --beo-light: #1EBEC6;   
+    --beo-yellow: #FFF387;  
+    --beo-blue: #90F7FF;    
+    --beo-orange: #FFAC00;  
+    --beo-coral: #FF8256;   
+    
+    --text-main: #2D3748;
+    --text-muted: #718096;
+    --bg-page: #F7FAFC;
+    --white: #FFFFFF;
+    --border-color: #E2E8F0;
+  }
+  
+  *{box-sizing:border-box; margin: 0; padding: 0;}
+  html{scroll-behavior:smooth; scroll-padding-top:30px;}
+  body{font-family:'Poppins', sans-serif; color:var(--text-main); background:var(--bg-page); line-height:1.6;}
+  h1, h2, h3, h4, .brand {font-family:'Quicksand', sans-serif; font-weight: 700; color: var(--beo-dark);}
+  a{color:inherit; text-decoration:none;}
+  
+  .wrap{max-width:1100px; margin:0 auto; padding:0 24px;}
+  
+  .btn{display:inline-flex; align-items:center; justify-content:center; padding:12px 24px; border-radius:30px; font-weight:600; font-family:'Poppins', sans-serif; font-size:15px; transition: all 0.2s; border:none; cursor:pointer;}
+  .btn-primary{background:var(--beo-coral); color:white; box-shadow: 0 4px 12px rgba(255, 130, 86, 0.3);}
+  .btn-primary:hover{background:#e6734a; transform: translateY(-2px);}
+  .btn-secondary{background:var(--white); color:var(--beo-dark); border:2px solid var(--beo-light);}
+  .btn-secondary:hover{background:var(--beo-blue);}
+
+  .header{display:flex; justify-content:space-between; align-items:center; padding:24px 0; border-bottom:1px solid var(--border-color);}
+  .brand{display:flex; align-items:center; font-size:32px; letter-spacing:-1px;}
+  .brand-o{display:inline-block; width:36px; height:46px; border-radius:50%; border:3.5px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, var(--beo-dark), var(--beo-light)) border-box; margin: 0 2px; transform: rotate(-10deg); position:relative; top:3px;}
+  .brand span{color:var(--beo-light);}
+  .top-note{font-size:13px; color:var(--text-muted); font-weight:500; text-transform:uppercase; letter-spacing:1px;}
+  .print-btn{background:none; border:none; color:var(--beo-dark); font-weight:600; font-size:14px; cursor:pointer; display:flex; align-items:center; gap:6px;}
+  .print-btn:hover{text-decoration:underline;}
+
+  .hero{padding:50px 0 60px; display:grid; grid-template-columns: 1.2fr 1fr; gap:50px; align-items:center; position:relative; overflow:hidden;}
+  .hero::before{content:''; position:absolute; top:-50px; right:-100px; width:500px; height:500px; background:radial-gradient(circle, var(--beo-blue) 0%, transparent 70%); opacity:0.4; z-index:-1; border-radius:50%;}
+  .eyebrow{display:inline-block; background:var(--beo-yellow); color:var(--beo-dark); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:6px 16px; border-radius:20px; margin-bottom:20px;}
+  .hero h1{font-size:42px; line-height:1.15; margin-bottom:16px;}
+  .hero p.lead{font-size:16px; color:var(--text-muted); margin-bottom:24px;}
+  
+  .context-box{background:var(--white); border:1px solid var(--beo-light); border-left:6px solid var(--beo-dark); padding:20px; border-radius:12px; margin-bottom:30px; box-shadow:0 4px 12px rgba(0,127,133,0.05);}
+  .context-box strong{display:block; color:var(--beo-dark); font-size:15px; margin-bottom:8px;}
+  .context-box p{font-size:13.5px; color:var(--text-muted); margin-bottom:0;}
+  .context-box .date{display:inline-block; background:var(--bg-page); padding:2px 8px; border-radius:4px; font-size:12px; font-weight:600; color:var(--beo-dark); margin-right:8px;}
+  
+  .hero-card{background:var(--white); padding:32px; border-radius:24px; box-shadow:0 20px 40px rgba(0,127,133,0.08); border:1px solid var(--border-color); position:relative;}
+  .hero-card::before{content:''; position:absolute; top:-10px; left:-10px; right:-10px; bottom:-10px; border:1px solid var(--beo-light); border-radius:32px; z-index:-1; opacity:0.5;}
+  .hero-card h3{font-size:20px; margin-bottom:20px;}
+  .benefit{padding:12px 0; border-bottom:1px solid var(--border-color); display:flex; gap:16px; align-items:flex-start;}
+  .benefit:last-child{border-bottom:none;}
+  .benefit-icon{flex-shrink:0; width:24px; height:24px; background:var(--beo-blue); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--beo-dark); font-weight:bold; font-size:14px;}
+  .benefit b{display:block; font-size:15px; color:var(--beo-dark);}
+  .benefit span{font-size:13.5px; color:var(--text-muted);}
+
+  .metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:60px;}
+  .metric-card{background:var(--white); padding:24px; border-radius:16px; box-shadow:0 4px 15px rgba(0,0,0,0.03); border-top:4px solid var(--beo-light); text-align:center;}
+  .metric-card:nth-child(2){border-top-color:var(--beo-coral);}
+  .metric-card:nth-child(3){border-top-color:var(--beo-orange);}
+  .metric-card:nth-child(4){border-top-color:var(--beo-dark);}
+  .metric-card .val{font-family:'Quicksand'; font-size:32px; font-weight:700; color:var(--beo-dark);}
+  .metric-card .lab{font-size:13px; font-weight:500; margin:4px 0;}
+  .metric-card .src{font-size:11px; color:var(--text-muted);}
+
+  .nav{display:flex; justify-content:center; gap:20px; margin-bottom:60px;}
+  .nav a{font-size:14px; font-weight:600; padding:10px 20px; border-radius:20px; background:var(--white); color:var(--beo-dark); border:1px solid var(--border-color); transition:all 0.2s;}
+  .nav a:hover{background:var(--beo-dark); color:var(--white); border-color:var(--beo-dark);}
+
+  section{padding:60px 0; border-top:1px solid var(--border-color);}
+  .section-title{text-align:center; margin-bottom:50px;}
+  .section-title h2{font-size:36px; margin-bottom:12px;}
+  .section-title p{color:var(--text-muted); font-size:16px; max-width:600px; margin:0 auto;}
+
+  .axes-grid{display:grid; grid-template-columns:1fr; gap:24px;}
+  .axis-card{background:var(--white); border-radius:20px; padding:32px; display:grid; grid-template-columns:80px 1fr; gap:28px; box-shadow:0 8px 24px rgba(0,127,133,0.04); transition:transform 0.2s;}
+  .axis-card:hover{transform:translateY(-3px);}
+  .axis-icon-wrap{width:80px; height:80px; background:var(--bg-page); border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--beo-light);}
+  .axis-icon-wrap svg{width:36px; height:36px; stroke:var(--beo-dark); fill:none; stroke-width:1.5;}
+  .axis-header{display:flex; align-items:center; gap:16px; margin-bottom:12px; flex-wrap:wrap;}
+  .axis-header h3{font-size:24px; color:var(--beo-dark);}
+  .tag{font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px; background:var(--beo-blue); color:var(--beo-dark); text-transform:uppercase; letter-spacing:0.5px;}
+  .tag.coral{background:var(--beo-coral); color:white;}
+  .tag.yellow{background:var(--beo-yellow); color:var(--beo-dark);}
+  .axis-content p{color:var(--text-muted); font-size:15px; margin-bottom:16px;}
+  .axis-features{display:grid; grid-template-columns:1fr 1fr; gap:12px; list-style:none; margin-bottom:20px;}
+  .axis-features li{font-size:14px; display:flex; gap:10px; align-items:flex-start;}
+  .axis-features li::before{content:'•'; color:var(--beo-orange); font-size:20px; line-height:1;}
+  .price-box{background:var(--bg-page); padding:16px 20px; border-radius:12px; font-weight:600; color:var(--beo-dark); display:inline-block; width:100%;}
+  .price-box small{display:block; font-weight:400; color:var(--text-muted); font-size:13px; margin-top:4px;}
+
+  .roles-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+  .role-card{background:var(--white); padding:32px; border-radius:20px; box-shadow:0 8px 24px rgba(0,127,133,0.04);}
+  .role-card h3{font-size:22px; margin-bottom:16px; display:flex; align-items:center; gap:12px;}
+  .role-card h3::before{content:''; display:block; width:12px; height:12px; border-radius:50%; background:var(--beo-light);}
+  .role-card.be h3::before{background:var(--beo-dark);}
+  .role-card ul{padding-left:20px; color:var(--text-muted); font-size:15px;}
+  .role-card li{margin-bottom:10px;}
+
+  .principles{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:40px;}
+  .principle{background:var(--white); padding:20px; border-radius:16px; border-left:4px solid var(--beo-orange); box-shadow:0 4px 12px rgba(0,0,0,0.02);}
+  .principle b{display:block; color:var(--beo-dark); font-size:16px; margin-bottom:6px;}
+  .principle span{font-size:13px; color:var(--text-muted);}
+  
+  .table-container{background:var(--white); border-radius:20px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.04); margin-bottom:40px;}
+  table{width:100%; border-collapse:collapse; text-align:left;}
+  th{background:var(--beo-dark); color:white; padding:16px; font-family:'Quicksand'; font-weight:700; font-size:15px;}
+  td{padding:16px; border-bottom:1px solid var(--border-color); font-size:14px; vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td strong{display:block; font-size:16px; color:var(--beo-dark); margin-bottom:4px;}
+  td small{color:var(--text-muted); font-size:13px; display:block;}
+  .share{font-family:'Quicksand'; font-size:24px; font-weight:700; color:var(--beo-coral);}
+  .split-tags{display:flex; flex-direction:column; gap:6px;}
+  .split-tags span{background:var(--bg-page); padding:4px 8px; border-radius:6px; font-size:12px; font-weight:600; color:var(--beo-dark); display:inline-block; width:fit-content;}
+
+  .calculator-wrap{background:linear-gradient(135deg, var(--bg-page), #eefcfc); border-radius:24px; padding:40px; border:1px solid var(--beo-light); display:grid; grid-template-columns:1fr 1.2fr; gap:40px;}
+  .calculator-inputs h3{font-size:24px; margin-bottom:10px;}
+  .calculator-inputs p{font-size:14px; color:var(--text-muted); margin-bottom:24px;}
+  .input-group{margin-bottom:20px;}
+  .input-group label{display:block; font-size:14px; font-weight:600; color:var(--beo-dark); margin-bottom:8px;}
+  .input-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .input-group input[type="number"]{width:100%; padding:12px 16px; border-radius:12px; border:2px solid var(--border-color); font-family:'Poppins'; font-size:16px; font-weight:600; color:var(--beo-dark); transition:border-color 0.2s;}
+  .input-group input[type="number"]:focus{border-color:var(--beo-light); outline:none;}
+  .input-group .hint{font-size:12px; color:var(--text-muted); margin-top:4px; display:block;}
+  
+  .radio-group{display:flex; gap:16px; margin-bottom:20px; padding:10px; background:var(--white); border-radius:12px; border:1px solid var(--border-color);}
+  .radio-btn{flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:600; color:var(--text-muted); transition:all 0.2s; border:2px solid transparent;}
+  .radio-btn.active{background:var(--beo-blue); color:var(--beo-dark); border-color:var(--beo-light);}
+  .radio-btn input{display:none;}
+
+  .checkbox-group{display:flex; align-items:center; gap:10px; margin-top:16px; padding:16px; background:var(--white); border-radius:12px; border:1px solid var(--border-color); cursor:pointer;}
+  .checkbox-group input[type="checkbox"]{width:20px; height:20px; accent-color:var(--beo-dark); cursor:pointer;}
+  .checkbox-group label{cursor:pointer; font-weight:600; color:var(--beo-dark); font-size:14px; margin:0;}
+
+  .calculator-results{background:var(--white); padding:28px; border-radius:16px; box-shadow:0 10px 30px rgba(0,127,133,0.08);}
+  .calc-block{margin-bottom:20px; padding-bottom:20px; border-bottom:1px dashed var(--border-color);}
+  .calc-block:last-child{border-bottom:none; margin-bottom:0; padding-bottom:0;}
+  .calc-block h4{font-size:14px; text-transform:uppercase; letter-spacing:1px; color:var(--beo-dark); margin-bottom:12px;}
+  .calc-row{display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px;}
+  .calc-row b{font-size:16px; color:var(--beo-dark);}
+  .calc-row.highlight{color:var(--beo-coral); font-weight:600; font-size:15px;}
+  .calc-row.highlight b{color:var(--beo-coral); font-size:18px;}
+  
+  .calc-row.bonus{color:var(--beo-orange); font-weight:600;}
+  .calc-row.bonus.border-bottom{border-bottom:1px solid #fdebd9; padding-bottom:8px; margin-bottom:8px;}
+  .calc-row.bonus-val{color:var(--beo-orange); font-weight:700; font-size:14px; margin-bottom:12px;}
+  .calc-row.bonus-val b{color:var(--beo-orange); font-size:16px;}
+  
+  .calc-row.derived{color:var(--beo-dark); font-weight:600; background:var(--bg-page); padding:6px 10px; border-radius:6px; margin:10px 0;}
+  
+  .calc-total-container{background:var(--beo-dark); border-radius:12px; padding:20px; margin-top:20px; color:white;}
+  .calc-total{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+  .calc-total span{font-size:14px; font-weight:500; text-transform:uppercase; letter-spacing:1px;}
+  .calc-total b{font-family:'Quicksand'; font-size:28px;}
+  
+  .calc-percentage{background:rgba(255,255,255,0.1); border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.2);}
+  .calc-percentage span{font-size:13px; font-weight:500;}
+  .calc-percentage b{font-family:'Quicksand'; font-size:22px; color:var(--beo-yellow);}
+
+  .steps-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:40px;}
+  .step{background:var(--white); padding:24px; border-radius:16px; text-align:center;}
+  .step-num{width:40px; height:40px; background:var(--beo-yellow); color:var(--beo-dark); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Quicksand'; font-weight:700; font-size:20px; margin:0 auto 16px;}
+  .step h4{font-size:16px; margin-bottom:8px;}
+  .step p{font-size:13px; color:var(--text-muted);}
+
+  footer{background:var(--beo-dark); color:var(--white); padding:40px 0; font-size:14px;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;}
+  footer .legal{font-size:12px; opacity:0.7; max-width:600px; text-align:right;}
+
+  .link-highlight{color:var(--beo-dark); font-weight:600; text-decoration:underline; transition:color 0.2s;}
+  .link-highlight:hover{color:var(--beo-coral);}
+  
+  .code-box{background:#F0FDF4; border:1px solid #86EFAC; border-radius:8px; padding:12px; margin-top:8px; font-family:monospace; font-size:13px; color:#166534; line-height:1.8;}
+  .code-box strong{color:#166534;}
+
+  .companion-features {
+    grid-template-columns: 1fr !important;
+  }
+  .companion-features li strong {
+    color: var(--beo-dark);
+  }
+
+  @media(max-width:900px){
+    .hero{grid-template-columns:1fr;}
+    .metrics{grid-template-columns:repeat(2,1fr);}
+    .axis-card{grid-template-columns:1fr;}
+    .axis-icon-wrap{width:60px; height:60px; margin-bottom:16px;}
+    .axis-features{grid-template-columns:1fr;}
+    .roles-grid{grid-template-columns:1fr;}
+    .principles{grid-template-columns:repeat(2,1fr);}
+    .calculator-wrap{grid-template-columns:1fr;}
+    .steps-grid{grid-template-columns:repeat(2,1fr);}
+    footer .wrap{flex-direction:column; text-align:center;}
+    footer .legal{text-align:center;}
+  }
+  @media(max-width:600px){
+    .hero h1{font-size:32px;}
+    .metrics{grid-template-columns:1fr;}
+    .principles{grid-template-columns:1fr;}
+    .steps-grid{grid-template-columns:1fr;}
+    .nav{flex-wrap:wrap;}
+    .input-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="header">
+    <div class="brand">
+      be<span class="brand-o"></span>top
+    </div>
+    <span class="top-note">Partenariat · Merci Oscar</span>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+      Imprimer
+    </button>
+  </header>
+
+  <section class="hero" id="top">
+    <div>
+      <span class="eyebrow">Proposition de partenariat</span>
+      <h1>beOtop × Merci Oscar<br>Faites de la récupération un service qui compte.</h1>
+      
+      <div class="context-box">
+        <strong>Suite à notre échange en visioconférence</strong>
+        <p><span class="date">06/11/2026</span> Participants : Daniel Etcheverry, Renaud Domergue, Nathalie Jalenques, Cyril Barbe.</p>
+      </div>
+
+      <p class="lead">Enrichissez votre offre de conciergerie avec les espaces de récupération beOtop et l'application Companion. Un service concret pour les équipes de vos clients, un argument différenciant pour vos appels d'offres, et un modèle de revenus partagé. <strong>Vous facturez le client final et conservez votre marge</strong> (sauf accord de facturation directe par beOtop).</p>
+      
+      <div style="display:flex; gap:16px;">
+        <a href="#modele" class="btn btn-primary">Voir votre rémunération</a>
+        <a href="#offre" class="btn btn-secondary">Découvrir l'offre</a>
+      </div>
+    </div>
+    <aside class="hero-card">
+      <h3>Un prolongement naturel de votre offre</h3>
+      <div class="benefit">
+        <div class="benefit-icon">✓</div>
+        <div><b>Réponse aux appels d'offres QVCT / RSE</b><span>Une solution mesurable, conforme RGPD, déjà déployée chez L'Oréal, BPCE, Louis Vuitton... (références disponibles sur notre site internet).</span></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">✓</div>
+        <div><b>Lien au quotidien</b><span>Companion accompagne les collaborateurs au-delà du lieu, avec un contenu exclusif conçu par 11 spécialistes partenaires et mis à jour en permanence.</span></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">✓</div>
+        <div><b>Usage mesuré</b><span>Des indicateurs agrégés pour nourrir le dialogue avec vos clients et justifier les renouvellements.</span></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">✓</div>
+        <div><b>Marge récurrente</b><span><strong>30 % sur les capteurs</strong>, 15 % sur la location, 20 % sur la maintenance. Taux fixe sur toute la durée du contrat.</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <div class="metrics">
+    <div class="metric-card"><div class="val">-28 %</div><div class="lab">de turnover avec un programme santé</div><div class="src">Business Case, 2015</div></div>
+    <div class="metric-card"><div class="val">2,5 M</div><div class="lab">de personnes en burn-out en France</div><div class="src">OpinionWay, 2022</div></div>
+    <div class="metric-card"><div class="val">+34 %</div><div class="lab">de performance après 20 min de sieste</div><div class="src">NASA, 1990</div></div>
+    <div class="metric-card"><div class="val">25 Mds €</div><div class="lab">coût annuel de l'absentéisme en France</div><div class="src">Kobispot, 2023</div></div>
+  </div>
+
+  <nav class="nav">
+    <a href="#offre">01 · L'offre</a>
+    <a href="#roles">02 · Les rôles</a>
+    <a href="#modele">03 · Les revenus</a>
+    <a href="#suite">04 · Le lancement</a>
+  </nav>
+</div>
+
+<section id="offre" style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Cinq briques. Un parcours cohérent.</h2>
+      <p>Chaque brique se propose seule ou combinée selon les besoins du client final. Les capteurs disposent d'une facturation dédiée, le simulateur est un outil d'aide à la vente.</p>
+    </div>
+
+    <div class="axes-grid">
+      <!-- AXE 1 -->
+      <article class="axis-card">
+        <div class="axis-icon-wrap"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></div>
+        <div class="axis-content">
+          <div class="axis-header">
+            <h3>Les Espaces beOtop</h3>
+            <span class="tag">Sur site</span>
+            <span class="tag yellow">Fabrication française</span>
+          </div>
+          <p>Des espaces de récupération modulables, conçus selon une approche ergonomique et physiologique pour offrir un relâchement profond. Leur cœur : la Position 127°, une posture en zéro gravité qui soulage les tensions dorsales.</p>
+          
+          <ul class="axis-features">
+            <li><strong>Ergonomie sur mesure :</strong> Position 127° favorisant le relâchement musculaire</li>
+            <li><strong>Formats adaptables :</strong> de 10 m² à 45 m²+, selon l'espace disponible (salle de pause, tiers-lieu...)</li>
+            <li><strong>Technologies de régénération :</strong> oxygénation, basses fréquences, luminothérapie</li>
+            <li><strong>Aménagement global :</strong> 7 principes appliqués (intimité, hygiène, acoustique)</li>
+          </ul>
+          
+          <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px;">
+            <a href="https://www.beotop.fr" target="_blank" class="link-highlight">Découvrir le site beOtop →</a>
+            <a href="https://www.beotop.fr/livre-blanc" target="_blank" class="link-highlight">Télécharger le livre blanc 2026 →</a>
+          </div>
+
+          <div class="price-box">
+            Achat dès 11 975 € HT · Location calculée sur amortissement
+            <small>À partir de l'année 2 : maintenance annuelle de 11 % du prix catalogue.<br><strong>Marge Merci Oscar : 15 % sur la location. 0 % sur l'achat. 20 % sur la maintenance (uniquement dans le cadre d'une location).</strong></small>
+          </div>
+        </div>
+      </article>
+
+      <!-- AXE 2 -->
+      <article class="axis-card">
+        <div class="axis-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+        <div class="axis-content">
+          <div class="axis-header">
+            <h3>Les Capteurs</h3>
+            <span class="tag">Usage</span>
+            <span class="tag yellow">Sans caméra · RGPD</span>
+          </div>
+          <p>Des capteurs de passage et de présence qui objectivent l'usage réel des espaces, avec accès à un dashboard multi-niveaux.</p>
+          <ul class="axis-features">
+            <li>Fréquentation par espace et par créneau</li>
+            <li>Restitution agrégée et anonymisée (k-anonymat)</li>
+            <li>Exports pour documenter le DUERP / RSE</li>
+            <li>Preuve d'usage pour préparer les renouvellements</li>
+          </ul>
+          <div class="price-box">
+            <strong>2 200 € HT d'installation (forfait unique)</strong> + 125 € HT / mois / capteur
+            <small><strong>Marge Merci Oscar : 30 %.</strong> L'installation n'est facturée qu'en année 1. L'abonnement au dashboard multi-niveaux est récurrent.</small>
+          </div>
+        </div>
+      </article>
+
+      <!-- AXE 3 -->
+      <article class="axis-card">
+        <div class="axis-icon-wrap"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/></svg></div>
+        <div class="axis-content">
+          <div class="axis-header">
+            <h3>Companion</h3>
+            <span class="tag">Au quotidien</span>
+            <span class="tag yellow">Sans e-mail requis</span>
+            <span class="tag coral">+ 25 % de cartes offertes</span>
+          </div>
+          <p>L'application web (PWA) accessible par carte, qui prolonge l'expérience. Un <strong>contenu propriétaire exclusif</strong> développé par un pool de 11 spécialistes pour accompagner les collaborateurs au quotidien.</p>
+          
+          <ul class="axis-features companion-features">
+            <li><strong>Fonctionnalités d'engagement :</strong> Jeu des 7 Censeurs, Baromètre de la vitalité, suivi "Mes progrès" et Challenges.</li>
+            <li><strong>Contenus experts propriétaires :</strong> respiration guidée, audios, vidéos et fiches pratiques.</li>
+            <li><strong>Code d'accès sécurisé :</strong> 12 chiffres, sans tracking publicitaire ni collecte d'e-mail.</li>
+            <li><strong>Bonus partenaire :</strong> 25 % de cartes offertes, intégrées à votre marge commerciale.</li>
+            <li><strong>Personnalisation :</strong> option marque blanche au nom de l'entreprise (+ 5 000 € HT).</li>
+          </ul>
+          
+          <div style="margin-bottom:16px;">
+            <a href="https://www.beotop.fr" target="_blank" class="link-highlight">Se connecter à Companion (cliquer sur "Espace client") →</a>
+            <div class="code-box">
+              <strong>Codes d'accès de démonstration :</strong><br>
+              9901-6072-2177 · Code : TT-1228<br>
+              9901-2092-9958 · Code : TT-1228<br>
+              9901-5989-9253 · Code : TT-1228
+            </div>
+          </div>
+
+          <div class="price-box">
+            12 € HT / an / collaborateur <span style="font-weight:400; font-size:13px; color:var(--text-muted);">(option marque blanche : 5 000 € HT)</span>
+            <small>Minimum 500 cartes. Bonus partenaire : 25 % de cartes supplémentaires offertes.</small>
+          </div>
+        </div>
+      </article>
+
+      <!-- AXE 4 -->
+      <article class="axis-card">
+        <div class="axis-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="18" cy="9" r="2.4"/><path d="M15.5 14.3c2.6.2 4.5 2.1 4.5 4.7"/></svg></div>
+        <div class="axis-content">
+          <div class="axis-header">
+            <h3>Les Intervenants</h3>
+            <span class="tag">Accompagnement</span>
+            <span class="tag yellow">Consultations à distance (bientôt)</span>
+          </div>
+          <p>Un réseau de praticiens (sophrologie, ostéopathie, naturopathie) qui anime les espaces sur site et produit les contenus Companion.</p>
+          <ul class="axis-features">
+            <li>Animations ponctuelles ou récurrentes</li>
+            <li>Statut professionnel enregistré</li>
+            <li>Contenus validés avant diffusion</li>
+            <li>Consultations audio/visio en déploiement</li>
+          </ul>
+          <div class="price-box">
+            Sur devis
+            <small>Format, fréquence et qualification des intervenants précisés dans la proposition.</small>
+          </div>
+        </div>
+      </article>
+
+      <!-- AXE 5 -->
+      <article class="axis-card">
+        <div class="axis-icon-wrap"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M20 19H4"/></svg></div>
+        <div class="axis-content">
+          <div class="axis-header">
+            <h3>Le Calculateur ROI</h3>
+            <span class="tag">Aide à la décision</span>
+            <span class="tag yellow">Hypothèses visibles</span>
+          </div>
+          <p>Un simulateur en ligne qui explore des scénarios de retour sur investissement (absentéisme, turnover, productivité).</p>
+          <ul class="axis-features">
+            <li>Support de discussion en rendez-vous</li>
+            <li>Sources publiques référencées (NASA, Malakoff Humanis...)</li>
+            <li>Algorithme transparent et modifiable</li>
+            <li>Résultats indicatifs, sans garantie de gains</li>
+          </ul>
+          
+          <div style="margin-bottom:16px;">
+            <a href="https://beotop-api.onrender.com/roi" target="_blank" class="link-highlight">Accéder au calculateur ROI →</a>
+          </div>
+
+          <div class="price-box">
+            Mis à disposition gratuitement
+            <small>Un outil pour cadrer une décision et ses hypothèses, pas une promesse de résultat.</small>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="roles">
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Une collaboration simple à organiser</h2>
+      <p>Le modèle par défaut est celui de la re-facturation : la conciergerie facture le client final et conserve sa marge. La répartition cadre la convention de partenariat.</p>
+    </div>
+    <div class="roles-grid">
+      <article class="role-card">
+        <h3>Merci Oscar</h3>
+        <ul>
+          <li>Identifie les entreprises clientes et leurs besoins QVCT.</li>
+          <li>Présente l'offre, intègre beOtop dans ses réponses aux appels d'offres.</li>
+          <li><strong>Facture le client final et encaisse les revenus.</strong></li>
+          <li><strong>Reverse la part beOtop selon la convention.</strong></li>
+          <li>Relaie les retours d'usage et les demandes d'évolution.</li>
+        </ul>
+      </article>
+      <article class="role-card be">
+        <h3>beOtop</h3>
+        <ul>
+          <li>Établit la proposition commerciale et le périmètre technique.</li>
+          <li>Fabrique, installe, met en service et assure le suivi.</li>
+          <li>Édite Companion, produit et valide les contenus.</li>
+          <li><strong>Facture Merci Oscar (ou facture directement le client final sur accord dérogatoire).</strong></li>
+        </ul>
+      </article>
+    </div>
+    <p class="note" style="margin-top:16px">Un montage d'achat-revente ou de location portée par la conciergerie nécessiterait un accord distinct. Il n'est pas chiffré dans cette proposition.</p>
+  </div>
+</section>
+
+<section id="modele" style="background:var(--white);">
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Votre part, fixe et lisible</h2>
+      <p>Les taux ci-dessous sont des taux pleins, identiques quel que soit le volume apporté et constants sur toute la durée de chaque contrat.</p>
+    </div>
+
+    <div class="principles">
+      <div class="principle"><b>Non dégressif</b><span>Aucune baisse de taux avec le volume ou l'ancienneté.</span></div>
+      <div class="principle"><b>Récurrent</b><span>La marge court sur toute la durée du contrat apporté.</span></div>
+      <div class="principle"><b>Focus Location</b><span>15 % sur la location, 0 % sur l'achat direct (géré par beOtop).</span></div>
+      <div class="principle" style="border-left-color:var(--beo-coral);"><b>Bonus Companion</b><span>25 % de cartes offertes intégrées à votre marge commerciale.</span></div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Votre marge (Merci Oscar)</th>
+            <th>À reverser à beOtop</th>
+            <th>Assiette (Facturation client)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Espaces beOtop (Location)</strong><small>Location mensuelle</small></td>
+            <td><span class="share">15 %</span></td>
+            <td><div class="split-tags"><span>beOtop 85 %</span></div></td>
+            <td>Montant HT du loyer.<small>Sur chaque loyer, toute la durée du contrat.</small></td>
+          </tr>
+          <tr>
+            <td><strong>Espaces beOtop (Achat)</strong><small>Vente directe</small></td>
+            <td><span class="share" style="color:var(--text-muted); font-size:18px;">0 %</span></td>
+            <td><div class="split-tags"><span>beOtop 100 %</span></div></td>
+            <td>Montant HT du prix de vente.<small>Pas de marge pour Merci Oscar sur l'achat direct.</small></td>
+          </tr>
+          <tr>
+            <td><strong>Maintenance des espaces</strong><small>Location uniquement · À partir de l'année 2</small></td>
+            <td><span class="share">20 %</span></td>
+            <td><div class="split-tags"><span>beOtop 80 %</span></div></td>
+            <td>11 % du prix catalogue HT.<small>Uniquement dans le cadre d'un contrat de location, à partir de l'année 2.</small></td>
+          </tr>
+          <tr>
+            <td><strong>Capteurs & Dashboard</strong><small>Installation + Abonnement</small></td>
+            <td><span class="share" style="font-size:28px; color:var(--beo-dark);">30 %</span></td>
+            <td><div class="split-tags"><span>beOtop 70 %</span></div></td>
+            <td>Montant HT de l'installation (2 200 € en année 1) + abonnements (125 €/mois/capteur).<small>Sur la durée du contrat.</small></td>
+          </tr>
+          <tr>
+            <td><strong>Companion (Abonnement)</strong><small>Forfait annuel</small></td>
+            <td><span class="share">15 %</span></td>
+            <td><div class="split-tags"><span>beOtop 50 %</span><span>Pool intervenants 35 %</span><span style="color:var(--beo-coral); font-weight:700;">+ 25 % cartes offertes</span></div></td>
+            <td>Prix HT des cartes vendues.<small>Sur toute la durée du contrat, renouvellements inclus.</small></td>
+          </tr>
+          <tr>
+            <td><strong>Personnalisation Companion</strong><small>Marque blanche (one-shot)</small></td>
+            <td><span class="share">15 %</span></td>
+            <td><div class="split-tags"><span>beOtop 85 %</span></div></td>
+            <td>5 000 € HT.<small>Frais de développement et d'intégration de la marque client.</small></td>
+          </tr>
+          <tr>
+            <td><strong>Intervenants</strong><small>Animations sur site</small></td>
+            <td><span class="share">15 %</span></td>
+            <td><div class="split-tags"><span>beOtop 85 %</span></div></td>
+            <td>Montant HT de chaque prestation facturée au client.</td>
+          </tr>
+          <tr>
+            <td><strong>Consultations individuelles</strong><small>Service à distance</small></td>
+            <td><span class="share">10 %</span></td>
+            <td><div class="split-tags"><span>Intervenant 60 %</span><span>beOtop 30 %</span></div></td>
+            <td>Montant HT de chaque consultation.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CALCULATEUR -->
+    <div class="calculator-wrap">
+      <div class="calculator-inputs">
+        <h3>Simulez vos marges</h3>
+        <p>Choisissez le type de contrat pour calculer les revenus correspondants. La maintenance (année 2+) ne s'applique que sur la location.</p>
+        
+        <div class="radio-group">
+          <label class="radio-btn active" id="btn-loc" onclick="setType('location')">
+            <input type="radio" name="type-contrat" value="location" checked> Location
+          </label>
+          <label class="radio-btn" id="btn-achat" onclick="setType('achat')">
+            <input type="radio" name="type-contrat" value="achat"> Achat
+          </label>
+        </div>
+
+        <div class="input-group">
+          <label for="volume">Nombre de cartes Companion (payées)</label>
+          <input id="volume" type="number" min="0" step="1" value="500">
+          <span class="hint">Minimum 500 cartes (ou 0). Saisir 0 si pas de Companion.</span>
+        </div>
+        
+        <div class="checkbox-group" style="margin-bottom:20px; margin-top:0; padding:10px 16px;">
+          <input type="checkbox" id="perso-toggle">
+          <label for="perso-toggle" style="font-size:13px;">Inclure la personnalisation App (5 000 € HT)</label>
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="prix-espace">Valeur de l'espace (€ HT)</label>
+            <input id="prix-espace" type="number" min="0" step="1" value="11975">
+            <span class="hint">Prix catalogue (achat ou base amortissement).</span>
+          </div>
+          <div class="input-group" id="duree-group">
+            <label for="duree">Durée d'amortissement (mois)</label>
+            <input id="duree" type="number" min="12" step="1" value="36">
+            <span class="hint">Ex: 36 mois (3 ans).</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="nb-capteurs">Nombre de capteurs installés</label>
+          <input id="nb-capteurs" type="number" min="0" step="1" value="2">
+          <span class="hint">Saisir 0 si pas de capteurs. (2 200 € HT installation + 125 €/mois/capteur).</span>
+        </div>
+
+        <div class="checkbox-group" id="annee-group">
+          <input type="checkbox" id="maint-toggle">
+          <label for="maint-toggle">Simuler l'année 2 et suivantes<br><small style="font-weight:400;color:var(--text-muted);">(supprimer l'installation, inclure la maintenance)</small></label>
+        </div>
+      </div>
+
+      <div class="calculator-results" id="results">
+        <div class="calc-block">
+          <h4>Companion (15 %)</h4>
+          <div class="calc-row"><span>Facturé HT / an (abonnement)</span><b id="c-total">6 000 €</b></div>
+          
+          <div id="perso-row" style="display:none; margin-bottom:8px;">
+            <div class="calc-row"><span>Personnalisation App (one-shot)</span><b>5 000 €</b></div>
+          </div>
+
+          <div class="calc-row highlight" style="border-top:1px solid var(--border-color); padding-top:8px;">
+            <span>Votre marge (15 %)</span><b id="c-margin-15">900 €</b>
+          </div>
+          <div class="calc-row"><span>À reverser à beOtop</span><b id="c-be">3 000 €</b></div>
+          <div class="calc-row"><span>Pool intervenants · 35 %</span><b id="c-pool">2 100 €</b></div>
+
+          <div style="margin-top:16px; padding-top:12px; border-top:1px dashed var(--border-color);">
+            <div class="calc-row bonus border-bottom"><span>🎁 Cartes offertes (+25 %)</span><b id="c-free">125 cartes</b></div>
+            <div class="calc-row bonus-val"><span>Valeur commerciale des cartes offertes</span><b id="c-free-val">1 500 €</b></div>
+          </div>
+          
+          <div class="calc-row highlight" style="font-size:13px; color:var(--beo-dark); margin-top:8px;">
+            <span>Total marge Companion (incl. cartes)</span><b id="c-com-total">2 400 €</b>
+          </div>
+        </div>
+        
+        <div class="calc-block">
+          <h4>Espace <span id="e-type-label">en location (15 %)</span></h4>
+          <div class="calc-row derived" id="e-monthly-row"><span>Loyer mensuel estimé</span><b id="e-monthly">399,17 / mois</b></div>
+          <div class="calc-row"><span>Facturé HT / an</span><b id="e-total">4 790 €</b></div>
+          <div class="calc-row highlight"><span>Votre marge</span><b id="e-com">718,50 €</b></div>
+          <div class="calc-row"><span>À reverser à beOtop · <span id="e-be-pct">85 %</span></span><b id="e-be">4 071,50 €</b></div>
+        </div>
+
+        <div class="calc-block" id="maint-block" style="display:none;">
+          <h4>Maintenance Espace (Année 2+) (20 %)</h4>
+          <div class="calc-row"><span>Facturé HT / an (11 % du prix)</span><b id="m-total">1 317,25 €</b></div>
+          <div class="calc-row highlight"><span>Votre marge</span><b id="m-com">263,45 €</b></div>
+          <div class="calc-row"><span>À reverser à beOtop · 80 %</span><b id="m-be">1 053,80 €</b></div>
+        </div>
+        
+        <div class="calc-block">
+          <h4>Capteurs & Dashboard (30 %)</h4>
+          <div class="calc-row"><span id="s-total-label">Facturé HT / an (Année 1)</span><b id="s-total">5 200 €</b></div>
+          <div class="calc-row highlight"><span>Votre marge</span><b id="s-com">1 560 €</b></div>
+          <div class="calc-row"><span>À reverser à beOtop · 70 %</span><b id="s-be">3 640 €</b></div>
+        </div>
+
+        <div class="calc-total-container">
+          <div class="calc-total">
+            <span>Marge totale Merci Oscar / an</span>
+            <b id="g-com">4 678,50 €</b>
+          </div>
+          <div class="calc-percentage">
+            <span>Part de Merci Oscar dans le CA total</span>
+            <b id="g-pct">26,7 %</b>
+          </div>
+        </div>
+        
+        <div style="text-align:center; margin-top:10px; font-size:11px; color:var(--text-muted);">
+          * Le pourcentage est calculé sur la marge totale (incluant la valeur commerciale des cartes offertes) face au CA total (incluant leur revente potentielle). Loyer calculé avec un coefficient de service de 1.2. Maintenance = 11% du prix catalogue à partir de l'année 2. Cartes offertes arrondies à l'entier le plus proche.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="suite">
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Partir d'un premier client. Construire la suite ensemble.</h2>
+      <p>Un périmètre précis, des responsabilités convenues, des usages observés avant d'élargir le déploiement.</p>
+    </div>
+    
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Cadrer</h4>
+        <p>Identifier un client pilote, ses besoins et les briques pertinentes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Formaliser</h4>
+        <p>Convention de partenariat : taux, assiette, calendrier de reversement.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Expérimenter</h4>
+        <p>Lancer le pilote, suivre l'usage et recueillir les retours des équipes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Déployer</h4>
+        <p>Ajuster l'offre et l'étendre aux autres clients de la conciergerie.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand" style="color:white; font-size:24px; margin-bottom:8px;">be<span class="brand-o" style="border-color:white; background:none;"></span>top</div>
+      <div style="font-size:12px; opacity:0.8;">6 Villa Léandre, 75018 Paris</div>
+    </div>
+    <div class="legal">
+      Document préparé pour Merci Oscar · Émis le 06/11/2026.<br>
+      Proposition de partenariat pour une conciergerie d'entreprise. Document de travail non contractuel. Tarifs, répartitions et périmètres soumis à validation dans un devis et une convention de partenariat.
+    </div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+(function(){
+  const vol = document.getElementById('volume');
+  const persoToggle = document.getElementById('perso-toggle');
+  const prixEspace = document.getElementById('prix-espace');
+  const duree = document.getElementById('duree');
+  const nbCap = document.getElementById('nb-capteurs');
+  const maintToggle = document.getElementById('maint-toggle');
+  const maintBlock = document.getElementById('maint-block');
+  
+  const btnLoc = document.getElementById('btn-loc');
+  const btnAchat = document.getElementById('btn-achat');
+  const dureeGroup = document.getElementById('duree-group');
+  const anneeGroup = document.getElementById('annee-group');
+  const eTypeLabel = document.getElementById('e-type-label');
+  const eMonthlyRow = document.getElementById('e-monthly-row');
+  const eBePct = document.getElementById('e-be-pct');
+
+  let currentType = 'location';
+
+  const fmt = new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:2});
+  const set = (id,v)=>{document.getElementById(id).textContent = v;};
+  
+  window.setType = function(type) {
+    currentType = type;
+    if (type === 'location') {
+      btnLoc.classList.add('active');
+      btnAchat.classList.remove('active');
+      dureeGroup.style.display = 'block';
+      anneeGroup.style.display = 'flex';
+      eTypeLabel.textContent = 'en location (15 %)';
+      eMonthlyRow.style.display = 'flex';
+      eBePct.textContent = '85 %';
+    } else {
+      btnAchat.classList.add('active');
+      btnLoc.classList.remove('active');
+      dureeGroup.style.display = 'none';
+      anneeGroup.style.display = 'flex'; 
+      eTypeLabel.textContent = "à l'achat (0 %)";
+      eMonthlyRow.style.display = 'none'; 
+      eBePct.textContent = '100 %';
+    }
+    update();
+  };
+
+  function update(){
+    // --- GESTION DES ERREURS DE SAISIE ---
+    const okV = vol.validity.valid && vol.value !== '';
+    const okP = prixEspace.validity.valid && prixEspace.value !== '';
+    // Correction 1 : La durée n'est contrôlée qu'en mode location
+    const okD = currentType === 'achat' || (duree.validity.valid && duree.value !== '' && Number(duree.value) >= 12);
+    const okS = nbCap.validity.valid && nbCap.value !== '';
+
+    if (!okV || !okP || !okD || !okS) {
+      // Correction 2 : retrait de 'p-com' qui n'existe plus
+      ['c-total','c-com-total','c-be','c-pool', 'c-free-val', 'e-total', 'e-com', 'e-be', 'e-monthly', 'm-total', 'm-com', 'm-be', 's-total', 's-com', 's-be', 'g-com', 'g-pct', 'c-free', 'c-margin-15'].forEach(id => set(id, '—'));
+      return;
+    }
+
+    const numV = Number(vol.value);
+    const numP = Number(prixEspace.value);
+    const numD = Number(duree.value);
+    const numS = Number(nbCap.value);
+
+    if (numV > 0 && numV < 500) {
+      set('c-total', 'Erreur : min 500');
+      set('c-margin-15', 'Erreur');
+      set('c-com-total', 'Erreur');
+      set('c-be', 'Erreur');
+      set('c-pool', 'Erreur');
+      set('g-com', '—');
+      set('g-pct', '—');
+      return;
+    }
+
+    // --- 1. COMPANION ---
+    const cTotal = numV * 12;
+    const hasPerso = persoToggle.checked && !maintToggle.checked; 
+    
+    let pTotal = 0;
+    let pCom = 0;
+
+    if (hasPerso) {
+      pTotal = 5000;
+      pCom = pTotal * 0.15;
+    }
+
+    set('c-total', fmt.format(cTotal));
+    set('c-be', fmt.format((cTotal * .5) + (pTotal * .85)));
+    set('c-pool', fmt.format(cTotal * .35));
+    
+    // Arrondi à l'entier le plus proche
+    const freeCards = Math.round(numV * 0.25);
+    const freeVal = freeCards * 12; 
+    
+    set('c-free', freeCards.toLocaleString('fr-FR') + ' cartes');
+
+    const cCom = cTotal * .15;
+    set('c-margin-15', fmt.format(cCom + pCom));
+
+    const persoRow = document.getElementById('perso-row');
+    if (hasPerso) {
+      persoRow.style.display = 'block';
+      set('c-free-val', fmt.format(freeVal)); 
+    } else {
+      persoRow.style.display = 'none';
+      set('c-free-val', fmt.format(freeVal));
+    }
+
+    set('c-com-total', fmt.format(cCom + pCom + freeVal));
+
+    // --- 2. ESPACE ---
+    let eTotal = 0;
+    let eCom = 0;
+    let eBe = 0;
+
+    if (currentType === 'location') {
+      const eMonthlyRent = (numP / numD) * 1.2;
+      eTotal = eMonthlyRent * 12;
+      eCom = eTotal * .15; 
+      eBe = eTotal * .85;
+      set('e-monthly', fmt.format(eMonthlyRent) + ' / mois');
+    } else {
+      // Correction 3 : En mode Achat Année 2+, l'espace n'est plus facturé
+      if (maintToggle.checked) {
+        eTotal = 0;
+        eCom = 0;
+        eBe = 0;
+      } else {
+        eTotal = numP;
+        eCom = 0; 
+        eBe = eTotal; 
+      }
+    }
+    
+    set('e-total', fmt.format(eTotal));
+    set('e-com', fmt.format(eCom));
+    set('e-be', fmt.format(eBe));
+
+    // --- 3. MAINTENANCE ---
+    let maintTotal = 0;
+    let maintCom = 0;
+    let maintBe = 0;
+
+    if (currentType === 'location' && maintToggle.checked) {
+      maintTotal = numP * 0.11;
+      maintCom = maintTotal * 0.20; 
+      maintBe = maintTotal * 0.80;
+      
+      set('m-total', fmt.format(maintTotal));
+      set('m-com', fmt.format(maintCom));
+      set('m-be', fmt.format(maintBe));
+      maintBlock.style.display = 'block';
+    } else {
+      maintBlock.style.display = 'none';
+      maintCom = 0;
+      maintTotal = 0;
+    }
+
+    // --- 4. CAPTEURS ---
+    let sTotal = 0;
+    let sCom = 0;
+    let sBe = 0;
+
+    if (numS > 0) {
+      const sAbonnementAnnuel = numS * 125 * 12;
+      
+      if (!maintToggle.checked) {
+        sTotal = 2200 + sAbonnementAnnuel;
+        set('s-total-label', 'Facturé HT / an (Année 1)');
+      } else {
+        sTotal = sAbonnementAnnuel;
+        set('s-total-label', 'Facturé HT / an (Année 2+)');
+      }
+      
+      sCom = sTotal * .30;
+      sBe = sTotal * .70;
+    }
+    
+    set('s-total', sTotal === 0 ? '0 €' : fmt.format(sTotal));
+    set('s-com', sTotal === 0 ? '0 €' : fmt.format(sCom));
+    set('s-be', sTotal === 0 ? '0 €' : fmt.format(sBe));
+
+    // --- TOTAL & POURCENTAGE ---
+    const totalCA = cTotal + pTotal + eTotal + maintTotal + sTotal + freeVal;
+    const moTotalRev = cCom + pCom + eCom + maintCom + sCom + freeVal;
+    
+    if (totalCA === 0) {
+      set('g-com', '0 €');
+      set('g-pct', '0,0 %');
+    } else {
+      const pct = (moTotalRev / totalCA) * 100;
+      set('g-com', fmt.format(moTotalRev));
+      set('g-pct', pct.toFixed(1).replace('.', ',') + ' %');
+    }
+  }
+  
+  vol.addEventListener('input',update);
+  persoToggle.addEventListener('change',update);
+  prixEspace.addEventListener('input',update);
+  duree.addEventListener('input',update);
+  nbCap.addEventListener('input',update);
+  maintToggle.addEventListener('change',update);
+  
+  update();
+})();
+</script>
+</body>
+</html>
