@@ -259,10 +259,6 @@
         <div class="benefit-icon">✓</div>
         <div><b>Usage mesuré</b><span>Des indicateurs agrégés pour nourrir le dialogue avec vos clients et justifier les renouvellements.</span></div>
       </div>
-      <div class="benefit">
-        <div class="benefit-icon">✓</div>
-        <div><b>Marge récurrente</b><span><strong>30 % sur les capteurs</strong>, 10 % sur la location, 20 % sur la maintenance. Taux fixe sur toute la durée du contrat.</span></div>
-      </div>
     </aside>
   </section>
 
@@ -334,7 +330,7 @@
             <li>Preuve d'usage pour préparer les renouvellements</li>
           </ul>
           <div class="price-box">
-            <strong>2 200 € HT d'installation (forfait unique)</strong> + 125 € HT / mois / capteur
+            <strong>2 200 € HT d'installation (forfait unique, Paris – RP)</strong> + 125 € HT / mois / capteur
             <small><strong>Marge Merci Oscar : 30 %.</strong> L'installation n'est facturée qu'en année 1. L'abonnement au dashboard multi-niveaux est récurrent.</small>
           </div>
         </div>
@@ -543,14 +539,11 @@
     <div class="calculator-wrap">
       <div class="calculator-inputs">
         <h3>Simulez vos marges</h3>
-        <p>Choisissez le type de contrat pour calculer les revenus correspondants. La maintenance (année 2+) ne s'applique que sur la location.</p>
+        <p>Simulation sur la base d'un espace en location. La maintenance s'applique à partir de l'année 2.</p>
         
         <div class="radio-group">
-          <label class="radio-btn active" id="btn-loc" onclick="setType('location')">
-            <input type="radio" name="type-contrat" value="location" checked> Location
-          </label>
-          <label class="radio-btn" id="btn-achat" onclick="setType('achat')">
-            <input type="radio" name="type-contrat" value="achat"> Achat
+          <label class="radio-btn active" id="btn-loc" style="cursor:default;">
+            <input type="radio" name="type-contrat" value="location" checked> Espace en location
           </label>
         </div>
 
@@ -713,7 +706,6 @@
   const maintBlock = document.getElementById('maint-block');
   
   const btnLoc = document.getElementById('btn-loc');
-  const btnAchat = document.getElementById('btn-achat');
   const dureeGroup = document.getElementById('duree-group');
   const anneeGroup = document.getElementById('annee-group');
   const eTypeLabel = document.getElementById('e-type-label');
@@ -729,14 +721,12 @@
     currentType = type;
     if (type === 'location') {
       btnLoc.classList.add('active');
-      btnAchat.classList.remove('active');
       dureeGroup.style.display = 'block';
       anneeGroup.style.display = 'flex';
       eTypeLabel.textContent = 'en location (10 %)';
       eMonthlyRow.style.display = 'flex';
       eBePct.textContent = '90 %';
     } else {
-      btnAchat.classList.add('active');
       btnLoc.classList.remove('active');
       dureeGroup.style.display = 'none';
       anneeGroup.style.display = 'flex'; 
