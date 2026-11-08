@@ -309,6 +309,7 @@
 
           <div class="price-box">
             <strong>Marge Merci Oscar : 10 % sur la location</strong>
+            <small>Location sur 3 ans, réglée en 3 échéances annuelles (livraison + 45 jours, puis + 1 an et + 2 ans). Le loyer couvre le financement du matériel (facteur 1,18 sur 3 ans) et inclut la maintenance annuelle (12 % du matériel), sans marge supplémentaire. Rien n'est facturé au mois.</small>
           </div>
         </div>
       </article>
@@ -554,14 +555,14 @@
 
         <div class="input-row">
           <div class="input-group">
-            <label for="prix-espace">Valeur de l'espace (€ HT)</label>
+            <label for="prix-espace">Valeur du matériel (€ HT)</label>
             <input id="prix-espace" type="number" min="0" step="1" value="11975">
-            <span class="hint">Prix catalogue (achat ou base amortissement).</span>
+            <span class="hint">Prix catalogue, base du loyer.</span>
           </div>
           <div class="input-group" id="duree-group">
-            <label for="duree">Durée d'amortissement (mois)</label>
-            <input id="duree" type="number" min="12" step="1" value="36">
-            <span class="hint">Ex: 36 mois (3 ans).</span>
+            <label>Durée de location</label>
+            <input type="text" value="3 ans · 3 échéances annuelles" disabled style="background:var(--bg-page);">
+            <span class="hint">Loyer annuel = matériel × 1,18 / 3 + maintenance 12 %.</span>
           </div>
         </div>
 
@@ -604,10 +605,10 @@
         
         <div class="calc-block">
           <h4>Espace <span id="e-type-label">en location (10 %)</span></h4>
-          <div class="calc-row derived" id="e-monthly-row"><span>Loyer mensuel estimé</span><b id="e-monthly">399,17 / mois</b></div>
-          <div class="calc-row"><span>Facturé HT / an</span><b id="e-total">4 790 €</b></div>
-          <div class="calc-row highlight"><span>Votre marge</span><b id="e-com">479 €</b></div>
-          <div class="calc-row"><span>À reverser à beOtop · <span id="e-be-pct">90 %</span></span><b id="e-be">4 311 €</b></div>
+          <div class="calc-row derived" id="e-monthly-row"><span>Équivalent mensuel (indicatif)</span><b id="e-monthly">512,26 € / mois</b></div>
+          <div class="calc-row"><span>Échéance annuelle HT (maintenance incluse)</span><b id="e-total">6 147,17 €</b></div>
+          <div class="calc-row highlight"><span>Votre marge</span><b id="e-com">614,72 €</b></div>
+          <div class="calc-row"><span>À reverser à beOtop · <span id="e-be-pct">90 %</span></span><b id="e-be">5 532,45 €</b></div>
         </div>
 
         <div class="calc-block">
@@ -620,16 +621,16 @@
         <div class="calc-total-container">
           <div class="calc-total">
             <span>Marge totale Merci Oscar / an</span>
-            <b id="g-com">4 439 €</b>
+            <b id="g-com">4 574,72 €</b>
           </div>
           <div class="calc-percentage">
             <span>Part de Merci Oscar dans le CA total</span>
-            <b id="g-pct">25,4 %</b>
+            <b id="g-pct">24,3 %</b>
           </div>
         </div>
         
         <div style="text-align:center; margin-top:10px; font-size:11px; color:var(--text-muted);">
-          * Le pourcentage est calculé sur la marge totale (incluant la valeur commerciale des cartes offertes) face au CA total (incluant leur revente potentielle). Loyer calculé avec un coefficient de service de 1.2. Cartes offertes arrondies à l'entier le plus proche.
+          * Le pourcentage est calculé sur la marge totale (incluant la valeur commerciale des cartes offertes) face au CA total (incluant leur revente potentielle). Loyer annuel = valeur du matériel × 1,18 / 3 (financement sur 3 ans) + 12 % de maintenance incluse ; facteur de financement en attente de validation par la direction financière. Cartes offertes arrondies à l'entier le plus proche.
         </div>
       </div>
     </div>
@@ -687,7 +688,6 @@
   const vol = document.getElementById('volume');
   const persoToggle = document.getElementById('perso-toggle');
   const prixEspace = document.getElementById('prix-espace');
-  const duree = document.getElementById('duree');
   const nbCap = document.getElementById('nb-capteurs');
   const maintToggle = document.getElementById('maint-toggle');
   
@@ -728,7 +728,7 @@
     const okV = vol.validity.valid && vol.value !== '';
     const okP = prixEspace.validity.valid && prixEspace.value !== '';
     // Correction 1 : La durée n'est contrôlée qu'en mode location
-    const okD = currentType === 'achat' || (duree.validity.valid && duree.value !== '' && Number(duree.value) >= 12);
+    const okD = true;
     const okS = nbCap.validity.valid && nbCap.value !== '';
 
     if (!okV || !okP || !okD || !okS) {
@@ -739,7 +739,6 @@
 
     const numV = Number(vol.value);
     const numP = Number(prixEspace.value);
-    const numD = Number(duree.value);
     const numS = Number(nbCap.value);
 
     if (numV > 0 && numV < 500) {
@@ -795,11 +794,12 @@
     let eBe = 0;
 
     if (currentType === 'location') {
-      const eMonthlyRent = (numP / numD) * 1.2;
-      eTotal = eMonthlyRent * 12;
+      // Modèle ROI (nov. 2026) : 3 annuités = CAPEX x 1,18 / 3 + maintenance 12 % du matériel
+      const FACTEUR_LEASING = 1.18, TAUX_MAINTENANCE = 0.12;
+      eTotal = numP * FACTEUR_LEASING / 3 + numP * TAUX_MAINTENANCE;
       eCom = eTotal * .10; 
       eBe = eTotal * .90;
-      set('e-monthly', fmt.format(eMonthlyRent) + ' / mois');
+      set('e-monthly', fmt.format(eTotal / 12) + ' / mois');
     } else {
       // Correction 3 : En mode Achat Année 2+, l'espace n'est plus facturé
       if (maintToggle.checked) {
@@ -862,7 +862,6 @@
   vol.addEventListener('input',update);
   persoToggle.addEventListener('change',update);
   prixEspace.addEventListener('input',update);
-  duree.addEventListener('input',update);
   nbCap.addEventListener('input',update);
   maintToggle.addEventListener('change',update);
   
