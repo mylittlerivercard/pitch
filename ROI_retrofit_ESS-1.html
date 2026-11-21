@@ -835,13 +835,29 @@ table.mini td:first-child{white-space:nowrap}
 #left table.mini td,#left table.mini th{font-size:.62rem}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 </style>
+<style id="extra">
+.dec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-bottom:.8rem}
+.dec-grid input[type=text],.dec-grid select{width:100%;box-sizing:border-box}
+select{font-family:var(--sans);background:rgba(var(--color-white-rgb),.04);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:.5rem .6rem;font-size:.76rem;color-scheme:dark}
+select:focus{border-color:var(--gold);outline:none}
+.dec-card{border:1px solid var(--sage);background:var(--green-dim);border-radius:4px;padding:.95rem 1.05rem;margin:.9rem 0}
+.dec-card.dec-none{border-color:var(--red);background:rgba(var(--color-white-rgb),.04)}
+.dec-lbl{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);margin-bottom:.2rem}
+.dec-name{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:.55rem}
+.dec-note{font-size:.64rem;line-height:1.55;color:var(--text-dim);margin-top:.55rem}
+.dec-note strong{color:var(--text)}
+table.mini td.dec-st{text-align:left;white-space:normal;min-width:11rem;font-size:.6rem}
+table.mini tr.dec-top td{background:rgba(var(--color-white-rgb),.05)}
+.dec-btn{width:auto;flex:none;padding:.3rem .6rem;font-size:.62rem}
+table.mini td.dec-nm{text-align:left}
+</style>
 </head>
 <body>
 <div id="hdr">
   <span class="brand">Retrofit&amp;ESS</span>
   <h1>Calculateur ROI — retrofit d'une centrale sous contrat EDF OA · cas étude 69,3 kWc</h1>
   <nav id="anchors" aria-label="Sections" style="display:flex;gap:.9rem;font-size:.62rem;flex-wrap:wrap">
-    <a href="#sec-centrale">Centrale</a><a href="#sec-retrofit">Retrofit</a><a href="#sec-interventions">Interventions</a><a href="#sec-bilan">Bilan</a><a href="#sec-regles">Règles</a>
+    <a href="#sec-centrale">Centrale</a><a href="#sec-retrofit">Retrofit</a><a href="#sec-interventions">Interventions</a><a href="#sec-decision">Décision</a><a href="#sec-bilan">Bilan</a><a href="#sec-regles">Règles</a>
   </nav>
   <span id="mode-lbl">Calage sur l'étude</span>
 </div>
@@ -965,8 +981,30 @@ table.mini td:first-child{white-space:nowrap}
       <div class="hint-txt">La part ACC s'applique à la production directe, le stockage à son surplus : les deux flux ne portent pas sur les mêmes kWh.</div></div>
   </div>
 
+  <div class="sec" id="sec-decision">
+    <div class="sec-ttl" style="color:var(--sage);border-color:var(--teal-border)">08 · Aide à la décision</div>
+    <div class="hint-txt" style="margin-bottom:.8rem">L'outil teste les 16 combinaisons d'interventions avec les réglages actuels des sections 01 à 07, écarte celles qui ne respectent pas vos contraintes, puis classe les autres. C'est un calcul déterministe : le résultat vaut ce que valent les hypothèses saisies, notamment celles de l'extension, du stockage et de l'ACC.</div>
+    <div class="dec-grid">
+      <div><label class="mf-lbl" for="dc-budget">Investissement max (€)</label><input type="text" id="dc-budget" inputmode="numeric" placeholder="aucun" oninput="setDC('budget',this.value)"></div>
+      <div><label class="mf-lbl" for="dc-pb">Payback max (mois)</label><input type="text" id="dc-pb" inputmode="numeric" placeholder="aucun" oninput="setDC('pb',this.value)"></div>
+      <div><label class="mf-lbl" for="dc-tri">TRI minimum (%)</label><input type="text" id="dc-tri" inputmode="decimal" placeholder="aucun" oninput="setDC('tri',this.value)"></div>
+      <div><label class="mf-lbl" for="dc-van">VAN minimum (€)</label><input type="text" id="dc-van" inputmode="numeric" value="0" oninput="setDC('van',this.value)"></div>
+    </div>
+    <div class="dec-grid">
+      <div><label class="mf-lbl" for="dc-retro_on">Retrofit</label><select id="dc-retro_on" onchange="setForce('retro_on',this.value)"><option value="auto">Au choix de l'outil</option><option value="oui">Imposer</option><option value="non">Exclure</option></select></div>
+      <div><label class="mf-lbl" for="dc-ext_on">Extension</label><select id="dc-ext_on" onchange="setForce('ext_on',this.value)"><option value="auto">Au choix de l'outil</option><option value="oui">Imposer</option><option value="non">Exclure</option></select></div>
+      <div><label class="mf-lbl" for="dc-ess_on">Stockage</label><select id="dc-ess_on" onchange="setForce('ess_on',this.value)"><option value="auto">Au choix de l'outil</option><option value="oui">Imposer</option><option value="non">Exclure</option></select></div>
+      <div><label class="mf-lbl" for="dc-acc_on">ACC</label><select id="dc-acc_on" onchange="setForce('acc_on',this.value)"><option value="auto">Au choix de l'outil</option><option value="oui">Imposer</option><option value="non">Exclure</option></select></div>
+    </div>
+    <div class="dec-grid" style="align-items:end">
+      <div><label class="mf-lbl" for="dc-crit">Critère de classement</label><select id="dc-crit" onchange="setDC('crit',this.value)"><option value="van">VAN la plus élevée</option><option value="indice">VAN par euro investi</option><option value="pb">Payback le plus court</option></select></div>
+      <label class="ivhead" style="margin:0 0 .35rem"><input type="checkbox" id="dc-bloc" checked onchange="setDC('bloc',this.checked)"><span>Écarter les scénarios avec une alerte réglementaire bloquante</span></label>
+    </div>
+    <div id="dec-out" aria-live="polite"></div>
+  </div>
+
   <div class="sec" id="sec-bilan">
-    <div class="sec-ttl" style="color:var(--teal);border-color:var(--teal-border)">08 · Bilan annuel différentiel</div>
+    <div class="sec-ttl" style="color:var(--teal);border-color:var(--teal-border)">09 · Bilan annuel différentiel</div>
     <div style="overflow-x:auto"><table class="mini" style="min-width:560px"><tr><th>Année</th><th>Retrofit</th><th>Extension</th><th>Stockage</th><th>ACC</th><th>Invest.</th><th>Flux</th><th>Cumul</th></tr><tbody id="bilan-body"></tbody></table></div>
     <div class="mf-lbl" style="margin-top:1.4rem">Comparaison des cinq scénarios (réglages actuels)</div>
     <div style="overflow-x:auto"><table class="mini" style="min-width:520px"><tr><th>Scénario</th><th>Invest.</th><th>VAN</th><th>TRI</th><th>Payback</th><th>Flux cumulé</th></tr><tbody id="cmp5-body"></tbody></table></div>
@@ -976,7 +1014,7 @@ table.mini td:first-child{white-space:nowrap}
   </div>
 
   <div class="sec" id="sec-regles">
-    <div class="sec-ttl" style="color:var(--orange);border-color:rgba(var(--color-accent-orange-rgb),.2)">09 · Référentiel réglementaire <span id="regles-ver" style="text-transform:none;letter-spacing:0;color:var(--text-muted);font-weight:400"></span></div>
+    <div class="sec-ttl" style="color:var(--orange);border-color:rgba(var(--color-accent-orange-rgb),.2)">10 · Référentiel réglementaire <span id="regles-ver" style="text-transform:none;letter-spacing:0;color:var(--text-muted);font-weight:400"></span></div>
     <div class="hint-txt" style="margin-bottom:.7rem">Chaque règle est sourcée et datée. Les contrôles automatiques de la colonne de droite renvoient à ces références. « Vérifié » signifie lu sur un document officiel à la date de contrôle ; le contrat de la centrale n'a pas été lu.</div>
     <div style="overflow-x:auto"><table class="mini regles" style="min-width:560px"><tr><th>Réf.</th><th>Règle</th><th>Source</th><th>Statut</th></tr><tbody id="regles-body"></tbody></table></div>
   </div>
@@ -1306,7 +1344,7 @@ function scenario(P0){
       const fr=(y===ya)? ((P.mode==='etude'&&y===yEnd)?1:firstFrac(P,y,da)) : 1;
       const prod=((P.retro_on!==false)?F.avec(y)*(1+P.ajPostApres):F.sans(y))*fr + (extProd[y]||0)*0;
       const idxF=Math.pow(1+P.idxPost,Math.max(0,y-yEnd));
-      add(y,'acc',prod*P.partACC*(P.prixACC*idxF-pPost(y))-P.accFee*fr,Date.UTC(y,6,1));
+      add(y,'acc',prod*P0.partACC*(P.prixACC*idxF-pPost(y))-P.accFee*fr,Date.UTC(y,6,1));
     }
   }
   // agrégats
@@ -1351,6 +1389,73 @@ function tornado(P){
 }
 function addM(iso,m){ const d=new Date(D(iso)); d.setUTCMonth(d.getUTCMonth()+m); return d.toISOString().slice(0,10); }
 
+/* ===================== AIDE À LA DÉCISION =====================
+   Teste les 16 combinaisons d'interventions (retrofit, extension, stockage, ACC) avec les réglages courants,
+   écarte celles qui violent une contrainte, classe les autres selon un critère. Calcul déterministe : aucune IA. */
+const IV=[['retro_on','Retrofit'],['ext_on','Extension'],['ess_on','Stockage'],['acc_on','ACC']];
+function comboName(set){ const n=IV.filter(x=>set[x[0]]).map(x=>x[1]); return n.length? n.join(' + ') : 'Statu quo'; }
+function motifsOf(c,C,bloc){
+  const m=[];
+  IV.forEach(x=>{
+    const f=(C.force||{})[x[0]];
+    if(f==='oui' && !c.set[x[0]]) m.push({k:'force_oui',lbl:x[1]});
+    if(f==='non' && c.set[x[0]]) m.push({k:'force_non',lbl:x[1]});
+  });
+  const has=c.invest>0;
+  if(C.vanMin!=null && c.van<C.vanMin-1e-9) m.push({k:'van',v:c.van,lim:C.vanMin});
+  if(C.budget!=null && c.invest>C.budget+1e-9) m.push({k:'budget',v:c.invest,lim:C.budget});
+  if(C.pbMax!=null && has && (c.pb===null || c.pb>C.pbMax+1e-9)) m.push({k:'pb',v:c.pb,lim:C.pbMax});
+  if(C.triMin!=null && has && (c.tri===null || c.tri<C.triMin-1e-9)) m.push({k:'tri',v:c.tri,lim:C.triMin});
+  if(bloc) c.crit.forEach(f=>m.push({k:'reg',ref:f.ref,s:f.s||'alerte bloquante'}));
+  return m;
+}
+function nIv(c){ return IV.filter(x=>c.set[x[0]]).length; }
+function rankKey(c,crit){
+  if(crit==='indice') return -(c.invest>0? c.van/c.invest : 0);
+  if(crit==='pb') return c.invest>0? (c.pb===null? Infinity : c.pb) : Infinity;
+  return -c.van;
+}
+function rankList(cands,C,bloc){
+  cands.forEach(c=>{ c.motifs=motifsOf(c,C,bloc); c.ok=c.motifs.length===0; });
+  const ok=cands.filter(c=>c.ok).sort((a,b)=> rankKey(a,C.crit)-rankKey(b,C.crit) || (C.crit==='pb'? b.van-a.van : a.invest-b.invest) || a.invest-b.invest || nIv(a)-nIv(b));
+  const ko=cands.filter(c=>!c.ok).sort((a,b)=>b.van-a.van);
+  return {ok,ko};
+}
+function decide(P,C,flagFn){
+  const cands=[];
+  for(let m=0;m<16;m++){
+    const set={}; IV.forEach((x,i)=>{ set[x[0]]=!!(m&(1<<i)); });
+    const Q=Object.assign({},P,set); if(Q.acc_on && !(Q.partACC>0)) Q.partACC=0.5;
+    const S=scenario(Q);
+    const fl=flagFn? flagFn(S.R,Q) : [];
+    cands.push({m,set,name:comboName(set),Q,S,van:S.van,invest:S.invest,tri:S.tri,pb:S.pb,cumFin:S.cumFin,crit:fl.filter(x=>x.l==='crit'),flags:fl});
+  }
+  const bloc=C.bloc!==false;
+  const L=rankList(cands,C,bloc);
+  const retenu=L.ok.length? L.ok[0] : null;
+  L.ok.forEach((c,i)=>{ c.rang=i+1; });
+  // valeur marginale de chaque intervention du scénario retenu, robustesse
+  let marginal=[],robust=null;
+  if(retenu){
+    IV.forEach(x=>{ if(retenu.set[x[0]]){ const q=Object.assign({},retenu.Q,{[x[0]]:false}); marginal.push({lbl:x[1],v:retenu.van-scenario(q).van}); } });
+    const T=tornado(retenu.Q); let worst=Infinity,neg=0;
+    T.rows.forEach(r=>{ const w=Math.min(r.lo,r.hi); if(w<worst) worst=w; if(w<0) neg++; });
+    robust={worst,neg,n:T.rows.length,base:T.base};
+  }
+  // coût du verrou réglementaire : meilleur scénario si les alertes bloquantes étaient levées
+  let sansBlocage=null;
+  if(bloc && cands.some(c=>c.crit.length)){
+    const L2=rankList(cands.map(c=>Object.assign({},c)),C,false);
+    const b=L2.ok[0];
+    if(b && (!retenu || b.name!==retenu.name)){
+      sansBlocage={c:b,delta:b.van-(retenu? retenu.van : 0),motifs:b.crit.map(f=>f.s||'alerte bloquante'+(f.ref?' ['+f.ref+']':''))};
+    }
+    // restaure les motifs de la liste principale (rankList mute les objets copiés, pas les originaux)
+  }
+  return {cands,ok:L.ok,ko:L.ko,retenu,second:L.ok[1]||null,marginal,robust,sansBlocage,bloc};
+}
+
+
 
 /* ===================== INTERFACE ===================== */
 const REF_ST = Object.assign({}, REF, { formule:'fp', dossier:'', interloc:'', auteur:'' });
@@ -1359,7 +1464,7 @@ const $ = id => document.getElementById(id);
 const nf = (n,d=0) => new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d,minimumFractionDigits:d}).format(n);
 const eur = n => (n<0?'−':'')+nf(Math.abs(Math.round(n)))+' €';
 const eurS = n => (n>0?'+':n<0?'−':'')+nf(Math.abs(Math.round(n)))+' €';
-const pct = (v,d=1) => nf(v*100,d)+' %';
+const pct = (v,d=1) => nf(v*100,d).replace('-','−')+' %';
 const dFr = ms => new Date(ms).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'});
 const addMonths = (iso,m) => { const d=new Date(D(iso)); d.setUTCMonth(d.getUTCMonth()+m); return d.toISOString().slice(0,10); };
 
@@ -1703,29 +1808,30 @@ function renderRegles(){
 }
 
 /* contrôles automatiques : le résultat dépend des règles du référentiel */
-function flagsList(R){
-  const f=[]; const add=(l,t,ref)=>f.push({l,t,ref});
-  const dp=ST.kwcN/ST.kwc0-1;
-  if(ST.retro_on!==false){
+function flagsList(R,P){
+  P=P||ST;
+  const f=[]; const add=(l,t,ref,s)=>f.push({l,t,ref,s});
+  const dp=P.kwcN/P.kwc0-1;
+  if(P.retro_on!==false){
     if(Math.abs(dp)<=0.10) add('ok','Puissance '+(dp>=0?'+':'−')+nf(Math.abs(dp)*100,1)+' % : dans la fourchette ±10 %. Le tarif n\'est maintenu que si les caractéristiques restent inchangées.','R6');
-    else add('crit','Puissance '+(dp>=0?'+':'−')+nf(Math.abs(dp)*100,1)+' % : hors fourchette ±10 %. La partie nouvelle est traitée comme un nouveau projet.','R6');
-    if(ST.integr) add('crit','Changement de technologie d\'intégration (toiture intégrée vers bac acier) : la partie nouvelle est un nouveau projet. Maintien du tarif à obtenir par écrit avant toute dépose.','R6');
-    if(ST.famille==='a') add('warn','Contrat S01 à S10B : le défaut technique n\'est pas un motif listé. Motifs : sinistre, sécurité ou tribunal, ou initiative du producteur (partie nouvelle en nouveau projet).','R4');
-    else if(ST.famille==='b') add('warn','Contrat S11 à S17 ou appel d\'offres : le défaut technique est recevable sur rapport d\'expertise. Contacter EDF OA avant toute action.','R5');
+    else add('crit','Puissance '+(dp>=0?'+':'−')+nf(Math.abs(dp)*100,1)+' % : hors fourchette ±10 %. La partie nouvelle est traitée comme un nouveau projet.','R6','puissance hors ±10 %');
+    if(P.integr) add('crit','Changement de technologie d\'intégration (toiture intégrée vers bac acier) : la partie nouvelle est un nouveau projet. Maintien du tarif à obtenir par écrit avant toute dépose.','R6','changement de technologie d\'intégration');
+    if(P.famille==='a') add('warn','Contrat S01 à S10B : le défaut technique n\'est pas un motif listé. Motifs : sinistre, sécurité ou tribunal, ou initiative du producteur (partie nouvelle en nouveau projet).','R4');
+    else if(P.famille==='b') add('warn','Contrat S11 à S17 ou appel d\'offres : le défaut technique est recevable sur rapport d\'expertise. Contacter EDF OA avant toute action.','R5');
     else add('warn','Famille de contrat non lue : le motif de remplacement recevable en dépend.','R4, R5');
   }
-  if(ST.ext_on){
-    if(ST.ext_kwc>100) add('crit','Extension de '+nf(ST.ext_kwc)+' kWc : au-delà de 100 kWc, plus éligible au S21 pour une DCR depuis le 22/09/2025 (appel d\'offres simplifié).','R1');
-    else add('warn','Extension de '+nf(ST.ext_kwc)+' kWc : S21 possible si P+Q ≤ 100 kWc. Le contrat de 2011-2012 est hors des 18 mois de Q, en principe. Compteur dédié obligatoire (DCR depuis le 05/06/2026). À confirmer avec EDF OA.','R1, R2, R3');
+  if(P.ext_on){
+    if(P.ext_kwc>100) add('crit','Extension de '+nf(P.ext_kwc)+' kWc : au-delà de 100 kWc, plus éligible au S21 pour une DCR depuis le 22/09/2025 (appel d\'offres simplifié).','R1','extension > 100 kWc (S21)');
+    else add('warn','Extension de '+nf(P.ext_kwc)+' kWc : S21 possible si P+Q ≤ 100 kWc. Le contrat de 2011-2012 est hors des 18 mois de Q, en principe. Compteur dédié obligatoire (DCR depuis le 05/06/2026). À confirmer avec EDF OA.','R1, R2, R3');
   }
-  if(ST.ess_on){
-    if(D(ST.ess_date)<=D(ST.fin)) add('warn','Stockage mis en service avant la fin du contrat : seule l\'énergie de la nouvelle centrale est supposée stockable. Cumul avec l\'obligation d\'achat à vérifier (V9).','R12');
-    const e=scenario(ST).ess;
-    if(e && e.valKwh<=0) add('crit','Valeur nette du kWh déchargé nulle ou négative : le stockage ne couvre pas la perte sur la vente évitée.','');
-    else if(e && e.breakeven!==null && e.breakeven>ST.ess_pD) add('warn','Le prix de décharge d\'équilibre ('+nf(e.breakeven,3)+' €/kWh) dépasse l\'hypothèse ('+nf(ST.ess_pD,3)+' €/kWh) : le stockage ne rentabilise pas son investissement.','');
-    if(ST.ess_cap/ST.ess_kw>8) add('warn','Durée de décharge de '+nf(ST.ess_cap/ST.ess_kw,1)+' h : à confronter au profil de consommation.','');
+  if(P.ess_on){
+    if(D(P.ess_date)<=D(P.fin)) add('warn','Stockage mis en service avant la fin du contrat : seule l\'énergie de la nouvelle centrale est supposée stockable. Cumul avec l\'obligation d\'achat à vérifier (V9).','R12');
+    const e=scenario(P).ess;
+    if(e && e.valKwh<=0) add('crit','Valeur nette du kWh déchargé nulle ou négative : le stockage ne couvre pas la perte sur la vente évitée.','','valeur nette du stockage ≤ 0');
+    else if(e && e.breakeven!==null && e.breakeven>P.ess_pD) add('warn','Le prix de décharge d\'équilibre ('+nf(e.breakeven,3)+' €/kWh) dépasse l\'hypothèse ('+nf(P.ess_pD,3)+' €/kWh) : le stockage ne rentabilise pas son investissement.','');
+    if(P.ess_cap/P.ess_kw>8) add('warn','Durée de décharge de '+nf(P.ess_cap/P.ess_kw,1)+' h : à confronter au profil de consommation.','');
   }
-  if(ST.acc_on){
+  if(P.acc_on){
     add('warn','ACC : les consommateurs, la PMO et l\'agrégateur ne sont pas identifiés. Pas de temps des courbes de charge non établi (moteur annuel).','R8, R10, R11');
   }
   return f;
@@ -1767,6 +1873,7 @@ function renderScenario(){
   const T=tornado(ST);
   $('torn-body').innerHTML=T.rows.map(r=>'<tr><td>'+r.l+'</td><td>'+eurS(r.lo)+'</td><td>'+eurS(r.hi)+'</td><td>'+eur(r.amp)+'</td></tr>').join('');
   $('torn-base').textContent='VAN du scénario actif : '+eurS(T.base);
+  renderDecision();
 }
 
 /* ---- fiche : blocs ajoutés ---- */
@@ -1785,12 +1892,96 @@ function ficheScenario(){
   t+='<div class="d-sttl">Comparaison des scénarios</div><table class="d-tbl"><tr><th>Scénario</th><th style="text-align:right">Investissement</th><th style="text-align:right">VAN</th><th style="text-align:right">TRI</th></tr>';
   PRESETS.forEach(p=>{ const q=scenario(applyPreset(ST,p.id)); t+='<tr><td>'+p.id+' · '+p.n+'</td><td class="num">'+eur(q.invest)+'</td><td class="num">'+eurS(q.van)+'</td><td class="num">'+(q.tri===null?'—':pct(q.tri,0))+'</td></tr>'; });
   t+='</table>';
+  { const C=decConstraints(), d=decide(ST,C,flagsList);
+    t+='<div class="d-sttl">Aide à la décision</div>';
+    t+=dli('Contraintes', critTxt(C));
+    t+=dli('Scénario retenu', d.retenu? (d.retenu.name==='Statu quo'?'statu quo':d.retenu.name+' : VAN '+eurS(d.retenu.van)+', investissement '+eur(d.retenu.invest)) : 'aucun scénario admissible');
+    if(d.sansBlocage) t+=dli('Sans alerte bloquante', d.sansBlocage.c.name+' : VAN '+eurS(d.sansBlocage.c.van)); }
   t+='<div class="d-sttl">Contrôles réglementaires</div><div class="d-cond"><ul>'+fl.map(x=>'<li>'+x.t+(x.ref?' ['+x.ref+']':'')+'</li>').join('')+'</ul></div>';
   t+='<div class="d-ctx">Référentiel réglementaire '+REGLES_VERSION+'. Les hypothèses énergétiques (productible, plafond, tarifs, prix de vente, performances du stockage) doivent être validées par un professionnel compétent ; l\'outil se limite à traiter ces hypothèses.</div>';
   return t;
 }
 
 window.addEventListener('DOMContentLoaded', init);
+
+/* ===================== AIDE À LA DÉCISION (interface) ===================== */
+const DC={budget:'',pb:'',tri:'',van:'0',crit:'van',bloc:true,force:{retro_on:'auto',ext_on:'auto',ess_on:'auto',acc_on:'auto'}};
+let DEC=null;
+function numIn(v){ const x=parseFloat(String(v).replace(/\s/g,'').replace(',','.')); return isFinite(x)? x : null; }
+function decConstraints(){
+  const f={}; Object.keys(DC.force).forEach(k=>{ if(DC.force[k]!=='auto') f[k]=DC.force[k]; });
+  const tri=numIn(DC.tri);
+  return {budget:numIn(DC.budget),pbMax:numIn(DC.pb),triMin:tri===null?null:tri/100,vanMin:numIn(DC.van),crit:DC.crit,bloc:DC.bloc,force:f};
+}
+function setDC(k,v){ DC[k]=v; renderDecision(); }
+function setForce(k,v){ DC.force[k]=v; renderDecision(); }
+function motifTxt(m){
+  switch(m.k){
+    case 'force_oui': return '« '+m.lbl+' » imposé';
+    case 'force_non': return '« '+m.lbl+' » exclu';
+    case 'van': return 'VAN '+eurS(m.v)+' sous le minimum ('+eurS(m.lim)+')';
+    case 'budget': return 'investissement '+eur(m.v)+' au-dessus du plafond ('+eur(m.lim)+')';
+    case 'pb': return 'payback '+(m.v===null?'jamais atteint':nf(m.v,0)+' mois')+' (maximum '+nf(m.lim,0)+')';
+    case 'tri': return 'TRI '+(m.v===null?'—':pct(m.v,0))+' sous le minimum ('+pct(m.lim,0)+')';
+    case 'reg': return m.s+(m.ref?' ['+m.ref+']':'');
+  }
+  return '';
+}
+function critTxt(C){
+  const a=[];
+  if(C.vanMin!==null) a.push('VAN ≥ '+eur(C.vanMin));
+  if(C.budget!==null) a.push('investissement ≤ '+eur(C.budget));
+  if(C.pbMax!==null) a.push('payback ≤ '+nf(C.pbMax,0)+' mois');
+  if(C.triMin!==null) a.push('TRI ≥ '+pct(C.triMin,0));
+  Object.keys(C.force).forEach(k=>{ const n=IV.find(x=>x[0]===k)[1]; a.push(n+(C.force[k]==='oui'?' imposé':' exclu')); });
+  a.push(C.crit==='van'?'classement par VAN':C.crit==='indice'?'classement par VAN par euro investi':'classement par payback');
+  a.push(C.bloc?'alertes bloquantes écartées':'alertes bloquantes non écartées');
+  return a.join(' · ');
+}
+function applyCombo(m){
+  const c=DEC && DEC.cands.find(x=>x.m===m); if(!c) return;
+  IV.forEach(x=>{ ST[x[0]]=!!c.set[x[0]]; });
+  if(ST.acc_on && !(ST.partACC>0)) ST.partACC=0.5;
+  ST.preset=null; syncControls(); render();
+  const e=$('sec-interventions'); if(e && e.scrollIntoView) e.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderDecision(){
+  const el=$('dec-out'); if(!el) return;
+  const C=decConstraints(), d=decide(ST,C,flagsList); DEC=d;
+  const r=d.retenu; let h='';
+  if(!r){
+    h+='<div class="dec-card dec-none"><div class="dec-lbl" style="color:var(--red)">Aucun scénario admissible</div><div class="dec-note" style="margin-top:0">Aucune des 16 combinaisons ne respecte l\'ensemble des contraintes, y compris le statu quo. Les motifs d\'exclusion figurent dans le tableau ci-dessous : assouplir la contrainte la plus fréquente.</div></div>';
+  } else {
+    const stat=(r.name==='Statu quo');
+    h+='<div class="dec-card"><div class="dec-lbl">Scénario retenu</div><div class="dec-name">'+(stat?'Statu quo : ne rien faire':r.name)+'</div>';
+    if(stat) h+='<div class="dec-note" style="margin:0 0 .5rem">Aucune combinaison ne fait mieux que le statu quo sous ces contraintes.</div>';
+    else {
+      h+=line('Investissement',eur(r.invest))+line('VAN différentielle à '+pct(ST.taux,1),eurS(r.van),'tot')+line('TRI',r.tri===null?'—':pct(r.tri,0))+line('Payback global',r.pb===null?'—':(r.pb<=0?'immédiat':nf(r.pb,0)+' mois'));
+      if(d.marginal.length>1) h+='<div class="mf-lbl" style="margin-top:.7rem">Apport de chaque intervention à la VAN</div>'+d.marginal.map(x=>line(x.lbl,eurS(x.v))).join('');
+      if(d.robust){
+        const ro=d.robust;
+        h+='<div class="dec-note"><strong>Robustesse.</strong> '+(ro.neg===0? 'La VAN reste positive dans les '+ro.n+' sensibilités testées (pire cas : '+eurS(ro.worst)+').' : 'La VAN devient négative dans '+ro.neg+' des '+ro.n+' sensibilités testées (pire cas : '+eurS(ro.worst)+').')+'</div>';
+      }
+      const lib=[]; if(r.set.ext_on) lib.push('extension ('+nf(ST.ext_kwc)+' kWc, '+nf(ST.ext_capexKwc)+' €/kWc, vente à '+nf(ST.ext_prix,3)+' €/kWh)'); if(r.set.ess_on) lib.push('stockage ('+nf(ST.ess_cap)+' kWh, '+nf(ST.ess_capex)+' €/kWh)'); if(r.set.acc_on) lib.push('ACC ('+pct(ST.partACC>0?ST.partACC:0.5,0)+' de la production à '+nf(ST.prixACC,3)+' €/kWh, aucun consommateur identifié)');
+      if(lib.length) h+='<div class="dec-note"><strong>Hypothèses libres.</strong> Le résultat dépend de valeurs non issues de l\'étude ni d\'un devis : '+lib.join(' ; ')+'.</div>';
+      if(d.second) h+='<div class="dec-note"><strong>Écart avec le suivant</strong> ('+d.second.name+') : '+(d.second.van-r.van>=0?'+':'−')+nf(Math.abs(Math.round(d.second.van-r.van)))+' € de VAN'+(d.second.invest!==r.invest? ', investissement '+(d.second.invest-r.invest>=0?'+':'−')+nf(Math.abs(Math.round(d.second.invest-r.invest)))+' €':'')+'.</div>';
+      h+='<div style="margin-top:.7rem"><button class="day-btn dec-btn" onclick="applyCombo('+r.m+')">Appliquer ce scénario dans la section 07</button></div>';
+    }
+    h+='</div>';
+  }
+  if(d.sansBlocage){
+    const b=d.sansBlocage;
+    h+='<div class="dec-card" style="border-color:var(--orange);background:rgba(var(--color-white-rgb),.04)"><div class="dec-lbl" style="color:var(--orange)">Coût du verrou réglementaire</div><div class="dec-note" style="margin-top:0">Sans les alertes bloquantes, le scénario retenu serait <strong>'+b.c.name+'</strong> (VAN '+eurS(b.c.van)+'), soit <strong>'+eurS(b.delta)+'</strong> de VAN de plus que le scénario ci-dessus. Alertes à lever : '+b.motifs.join(' ; ')+'. Ce montant est ce que vaut une confirmation écrite d\'EDF OA ; il ne devient réalisable qu\'une fois la confirmation obtenue.</div></div>';
+  }
+  // tableau classé
+  const rows=[];
+  d.ok.forEach(c=>rows.push({c,st:'<span style="color:var(--green)">● '+(c===r?'retenu':'admissible')+'</span>',top:c===r}));
+  d.ko.forEach(c=>rows.push({c,st:'<span style="color:var(--red)">● exclu</span> : '+c.motifs.map(motifTxt).join(' ; '),top:false}));
+  h+='<div class="mf-lbl" style="margin-top:1rem">Classement des 16 combinaisons <span style="color:var(--text-muted);text-transform:none;letter-spacing:0">(admissibles d\'abord)</span></div><div style="overflow-x:auto"><table class="mini" style="min-width:680px"><tr><th>Rang</th><th>Scénario</th><th>Invest.</th><th>VAN</th><th>TRI</th><th>Payback</th><th style="text-align:left">Statut</th><th></th></tr>'+
+    rows.map(x=>{ const c=x.c; return '<tr'+(x.top?' class="dec-top"':'')+'><td>'+(c.rang||'—')+'</td><td class="dec-nm">'+c.name+'</td><td>'+eur(c.invest)+'</td><td><strong>'+eurS(c.van)+'</strong></td><td>'+(c.tri===null?'—':pct(c.tri,0))+'</td><td>'+(c.invest>0? (c.pb===null?'—':(c.pb<=0?'immédiat':nf(c.pb,0)+' m')) : '—')+'</td><td class="dec-st">'+x.st+'</td><td><button class="day-btn dec-btn" onclick="applyCombo('+c.m+')" aria-label="Appliquer le scénario '+c.name+'">Appliquer</button></td></tr>'; }).join('')+'</table></div>';
+  h+='<div class="hint-txt">Contraintes retenues : '+critTxt(C)+'. Les dates de l\'extension, du stockage et de l\'ACC sont celles de la section 07 ; une part ACC à 0 % est portée à 50 % pour les combinaisons qui l\'incluent.</div>';
+  el.innerHTML=h;
+}
 
 </script>
 </body>
